@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { aboutParagraphs, profile, education } from "@/lib/portfolio-data";
 import { MorphSilhouette } from "./MorphSilhouette";
 import { SectionHeading } from "./SectionHeading";
+import { Magnetic } from "./Magnetic";
 
 export function About() {
   return (
@@ -134,6 +135,30 @@ export function About() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Resume Download Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="mt-6 flex"
+            >
+              <Magnetic
+                as="a"
+                href="/resume.pdf"
+                download="KM_Nutankumar_Resume.pdf"
+                strength={0.25}
+                dataCursor="hover"
+                className="group relative inline-flex items-center gap-3 rounded-full bg-lime px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-background overflow-hidden"
+              >
+                <span className="relative z-10">Download Resume</span>
+                <span className="relative z-10 transition-transform group-hover:translate-y-0.5">
+                  ↓
+                </span>
+                <span className="absolute inset-0 bg-cyan-acc -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </Magnetic>
             </motion.div>
           </div>
         </div>

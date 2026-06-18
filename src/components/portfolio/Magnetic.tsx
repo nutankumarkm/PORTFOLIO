@@ -9,6 +9,7 @@ interface MagneticProps {
   className?: string;
   as?: "div" | "button" | "a";
   href?: string;
+  download?: string;
   onClick?: () => void;
   dataCursor?: string;
   dataCursorLabel?: string;
@@ -21,6 +22,7 @@ export function Magnetic({
   className = "",
   as = "div",
   href,
+  download,
   onClick,
   dataCursor,
   dataCursorLabel,
@@ -56,7 +58,7 @@ export function Magnetic({
 
   if (as === "a" && href) {
     return (
-      <motion.a href={href} {...common} {...motionProps}>
+      <motion.a href={href} download={download} {...common} {...motionProps}>
         {children}
       </motion.a>
     );
