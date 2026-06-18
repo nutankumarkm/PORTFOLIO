@@ -9,7 +9,7 @@ import {
   useScroll,
 } from "framer-motion";
 import { profile, heroMetrics } from "@/lib/portfolio-data";
-import { MorphBlob, MorphBlobLines } from "./MorphBlob";
+import { MorphBlob } from "./MorphBlob";
 import { Magnetic } from "./Magnetic";
 import { ScrambleText } from "./ScrambleText";
 
@@ -24,11 +24,11 @@ export function Hero() {
   const containerRef = useRef<HTMLElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
-  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), {
+  const rotX = useSpring(useTransform(my, [-0.5, 0.5], [6, -6]), {
     stiffness: 150,
     damping: 20,
   });
-  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-8, 8]), {
+  const rotY = useSpring(useTransform(mx, [-0.5, 0.5], [-6, 6]), {
     stiffness: 150,
     damping: 20,
   });
@@ -37,7 +37,7 @@ export function Hero() {
     target: containerRef,
     offset: ["start start", "end start"],
   });
-  const titleY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const titleY = useTransform(scrollYProgress, [0, 1], [0, -80]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   useEffect(() => {
@@ -60,84 +60,81 @@ export function Hero() {
       id="hero"
       className="relative min-h-[100svh] w-full overflow-hidden grain"
     >
-      {/* Animated gradient mesh background */}
+      {/* Single soft gradient halo — replaces the busy triple-mesh */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
       >
         <div
-          className="absolute top-1/4 -left-32 w-[40vw] h-[40vw] rounded-full blur-[120px] opacity-50"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full blur-[140px] opacity-30"
           style={{
             background:
-              "radial-gradient(circle, rgba(212,255,58,0.4) 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute bottom-1/4 -right-32 w-[36vw] h-[36vw] rounded-full blur-[120px] opacity-40"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(255,58,140,0.4) 0%, transparent 70%)",
-          }}
-        />
-        <div
-          className="absolute top-1/2 left-1/2 w-[28vw] h-[28vw] rounded-full blur-[120px] opacity-30"
-          style={{
-            background:
-              "radial-gradient(circle, rgba(58,255,240,0.4) 0%, transparent 70%)",
+              "radial-gradient(circle, color-mix(in oklch, var(--lime) 50%, transparent) 0%, transparent 65%)",
           }}
         />
       </motion.div>
 
-      {/* Grid lines */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-          maskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent)",
-        }}
-      />
-
-      {/* Floating morphing blobs */}
-      <MorphBlobLines
-        className="absolute top-[8%] right-[10%] w-[280px] h-[280px] opacity-50 pointer-events-none"
-        color="#d4ff3a"
-        duration={22}
-      />
+      {/* Single morphing blob — focal accent on the right */}
       <MorphBlob
-        className="absolute bottom-[12%] left-[6%] w-[200px] h-[200px] opacity-30 pointer-events-none"
-        color="#ff3a8c"
-        duration={16}
-      />
-      <MorphBlob
-        className="absolute top-[20%] left-[40%] w-[120px] h-[120px] opacity-20 pointer-events-none"
-        color="#3afff0"
+        className="absolute top-1/2 right-[-8%] -translate-y-1/2 w-[min(45vw,520px)] aspect-square opacity-[0.22] pointer-events-none"
+        color="var(--lime)"
         duration={18}
       />
 
-      {/* Top status bar */}
+      {/* Subtle grid — much fainter than before */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+          backgroundSize: "100px 100px",
+          maskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
+        }}
+      />
+
+      {/* Left-side vertical meta strip (replaces the old overlapping top bar) */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.9, duration: 0.6 }}
-        className="absolute top-24 left-1/2 -translate-x-1/2 z-10 flex items-center gap-6 font-mono-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 2.0, duration: 0.6 }}
+        className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-4 z-20"
       >
-        <span className="flex items-center gap-2">
-          <span className="h-1 w-1 bg-lime rounded-full animate-pulse" />
+        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground [writing-mode:vertical-rl] rotate-180">
           {profile.location}
         </span>
-        <span className="hidden sm:inline">/</span>
-        <span className="hidden sm:inline">{profile.availability}</span>
+        <span className="h-12 w-px bg-hairline" />
+        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-lime [writing-mode:vertical-rl] rotate-180">
+          {profile.availability}
+        </span>
+      </motion.div>
+
+      {/* Right-side vertical scroll indicator (replaces bottom cue) */}
+      <motion.div
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 2.2, duration: 0.6 }}
+        className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 z-20"
+      >
+        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground [writing-mode:vertical-rl]">
+          Scroll
+        </span>
+        <div className="h-16 w-px bg-hairline relative overflow-hidden">
+          <motion.span
+            className="absolute top-0 left-0 w-full bg-lime"
+            animate={{ y: ["-100%", "100%"] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            style={{ height: "50%" }}
+          />
+        </div>
       </motion.div>
 
       {/* Center stage — kinetic name typography */}
       <motion.div
         style={{ y: titleY, opacity: titleOpacity }}
-        className="relative z-10 flex flex-col items-center justify-center min-h-[100svh] px-4"
+        className="relative z-10 flex flex-col items-center justify-center min-h-[100svh] px-4 pt-24 pb-32"
       >
         {/* Eyebrow */}
         <motion.div
@@ -153,7 +150,7 @@ export function Hero() {
 
         {/* Name — kinetic reveal */}
         <h1 className="font-display font-bold text-center leading-[0.85] tracking-tight">
-          <span className="block text-[clamp(2.8rem,12vw,9.5rem)]">
+          <span className="block text-[clamp(2.6rem,11vw,8.5rem)]">
             {firstName.map((ch, i) => (
               <motion.span
                 key={`f-${i}`}
@@ -171,7 +168,7 @@ export function Hero() {
               </motion.span>
             ))}
           </span>
-          <span className="block text-[clamp(2.8rem,12vw,9.5rem)] gradient-text">
+          <span className="block text-[clamp(2.6rem,11vw,8.5rem)] gradient-text">
             {lastName.map((ch, i) => (
               <motion.span
                 key={`l-${i}`}
@@ -191,12 +188,12 @@ export function Hero() {
           </span>
         </h1>
 
-        {/* Role morph text */}
+        {/* Role + location row — replaces cluttered status bar */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.6, duration: 0.6 }}
-          className="mt-6 flex items-center gap-3 font-mono-display text-sm sm:text-base tracking-[0.3em] uppercase"
+          className="mt-6 flex items-center gap-3 font-mono-display text-xs sm:text-sm tracking-[0.25em] uppercase"
         >
           <span className="text-muted-foreground">{profile.role}</span>
           <motion.span
@@ -214,7 +211,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.8, duration: 0.7 }}
-          className="mt-8 max-w-[min(92vw,640px)] text-center text-base sm:text-lg text-muted-foreground leading-relaxed"
+          className="mt-8 max-w-[min(92vw,580px)] text-center text-base sm:text-lg text-muted-foreground leading-relaxed"
         >
           {profile.tagline}
         </motion.p>
@@ -236,7 +233,7 @@ export function Hero() {
                 .getElementById("projects")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
-            className="group relative inline-flex items-center gap-3 rounded-full bg-lime px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-ink-900 overflow-hidden"
+            className="group relative inline-flex items-center gap-3 rounded-full bg-lime px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-background overflow-hidden"
           >
             <span className="relative z-10">View Work</span>
             <span className="relative z-10 transition-transform group-hover:translate-x-1">
@@ -249,53 +246,41 @@ export function Hero() {
             href={`mailto:${profile.email}`}
             strength={0.3}
             dataCursor="hover"
-            className="inline-flex items-center gap-2 rounded-full border border-ink-500 px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-foreground hover:border-lime/60 hover:text-lime transition-colors"
+            className="inline-flex items-center gap-2 rounded-full border border-hairline px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-foreground hover:border-lime/60 hover:text-lime transition-colors"
           >
             Say Hello
           </Magnetic>
         </motion.div>
       </motion.div>
 
-      {/* Bottom metrics strip */}
+      {/* Bottom metrics strip — slim, single row, no longer overlaps scroll cue */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3.2, duration: 0.8 }}
-        className="absolute bottom-8 left-0 right-0 z-10 px-4"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 w-[min(94vw,720px)]"
       >
-        <div className="mx-auto max-w-6xl grid grid-cols-2 md:grid-cols-4 gap-px bg-ink-600/40 border border-ink-600/40 rounded-2xl overflow-hidden backdrop-blur-sm">
+        <div className="flex items-center justify-between gap-4 rounded-full border border-hairline bg-surface-2/60 backdrop-blur-md px-5 py-3">
           {heroMetrics.map((m, i) => (
             <motion.div
               key={m.label}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.4 + i * 0.1 }}
-              className="bg-ink-900/80 px-4 py-4 sm:py-5 flex flex-col"
+              className="flex flex-col items-center text-center flex-1"
             >
               <div
-                className="font-display text-2xl sm:text-3xl font-bold"
+                className="font-display text-base sm:text-xl font-bold leading-none"
                 style={{ color: accentMap[m.accent] }}
               >
                 {m.value}
               </div>
-              <div className="mt-1 font-mono-display text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              <div className="mt-1 font-mono-display text-[9px] uppercase tracking-[0.15em] text-muted-foreground hidden sm:block">
                 {m.label}
               </div>
             </motion.div>
           ))}
         </div>
-      </motion.div>
-
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 3.6, duration: 0.6 }}
-        className="absolute bottom-2 left-1/2 -translate-x-1/2 z-10 hidden lg:flex flex-col items-center gap-2"
-      >
-        <span className="font-mono-display text-[9px] uppercase tracking-[0.3em] text-muted-foreground/60">
-          Scroll
-        </span>
       </motion.div>
     </section>
   );

@@ -77,7 +77,7 @@ export function Contact() {
             strength={0.4}
             dataCursor="view"
             dataCursorLabel="Email"
-            className="group relative inline-flex items-center gap-4 rounded-full bg-lime px-8 sm:px-12 py-5 sm:py-6 font-display text-base sm:text-lg font-bold text-ink-900 overflow-hidden"
+            className="group relative inline-flex items-center gap-4 rounded-full bg-lime px-8 sm:px-12 py-5 sm:py-6 font-display text-base sm:text-lg font-bold text-background overflow-hidden"
           >
             <span className="relative z-10">{profile.email}</span>
             <motion.span

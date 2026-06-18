@@ -38,26 +38,96 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-hairline: var(--hairline);
+  /* Backwards-compat aliases so from-ink-*, bg-ink-*, border-ink-* still work
+     and are theme-aware (they point to surface tokens defined per-theme below). */
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-lime: var(--lime);
+  --color-magenta: var(--magenta);
+  --color-cyan-acc: var(--cyan);
+  --color-amber-acc: var(--amber);
+  --color-violet-acc: var(--violet);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* ============================ LIGHT (default) ============================ */
+/* Warm cream-paper aesthetic — accents (lime/cyan/magenta) stay vivid */
 :root {
   --radius: 0.625rem;
-  /* Obsidian dark theme — the only mode for this portfolio */
-  --background: oklch(0.07 0.005 280);
+  --background: oklch(0.97 0.008 80); /* warm paper */
+  --foreground: oklch(0.16 0.01 280); /* deep ink */
+  --card: oklch(0.99 0.005 80);
+  --card-foreground: oklch(0.16 0.01 280);
+  --popover: oklch(0.99 0.005 80);
+  --popover-foreground: oklch(0.16 0.01 280);
+  --primary: oklch(0.55 0.18 125);
+  --primary-foreground: oklch(0.99 0.005 80);
+  --secondary: oklch(0.93 0.008 80);
+  --secondary-foreground: oklch(0.16 0.01 280);
+  --muted: oklch(0.93 0.008 80);
+  --muted-foreground: oklch(0.42 0.012 280);
+  --accent: oklch(0.55 0.22 350);
+  --accent-foreground: oklch(0.99 0.005 80);
+  --destructive: oklch(0.6 0.22 22);
+  --border: oklch(0.88 0.01 80);
+  --input: oklch(0.92 0.008 80);
+  --ring: oklch(0.55 0.18 125 / 0.45);
+
+  /* Surface tokens — replace the old ink-* scale */
+  --surface: oklch(0.97 0.008 80); /* page bg */
+  --surface-2: oklch(0.99 0.005 80); /* card */
+  --hairline: oklch(0.88 0.01 80); /* divider */
+
+  --chart-1: oklch(0.55 0.18 125);
+  --chart-2: oklch(0.55 0.22 350);
+  --chart-3: oklch(0.6 0.16 195);
+  --chart-4: oklch(0.7 0.17 75);
+  --chart-5: oklch(0.5 0.22 305);
+  --sidebar: oklch(0.99 0.005 80);
+  --sidebar-foreground: oklch(0.16 0.01 280);
+  --sidebar-primary: oklch(0.55 0.18 125);
+  --sidebar-primary-foreground: oklch(0.99 0.005 80);
+  --sidebar-accent: oklch(0.93 0.008 80);
+  --sidebar-accent-foreground: oklch(0.16 0.01 280);
+  --sidebar-border: oklch(0.88 0.01 80);
+  --sidebar-ring: oklch(0.55 0.18 125 / 0.45);
+
+  /* Accent palette — kept identical across themes for brand consistency */
+  --lime: #5fae1e;
+  --magenta: #d6277f;
+  --cyan: #0ba39a;
+  --amber: #c47800;
+  --violet: #7c3aed;
+
+  --ink-900: var(--surface);
+  --ink-800: var(--surface-2);
+  --ink-700: var(--muted);
+  --ink-600: var(--hairline);
+  --ink-500: var(--border);
+}
+
+/* ============================ DARK ============================ */
+.dark {
+  --background: oklch(0.08 0.005 280);
   --foreground: oklch(0.97 0.005 280);
-  --card: oklch(0.11 0.008 280);
+  --card: oklch(0.12 0.008 280);
   --card-foreground: oklch(0.97 0.005 280);
-  --popover: oklch(0.11 0.008 280);
+  --popover: oklch(0.12 0.008 280);
   --popover-foreground: oklch(0.97 0.005 280);
   --primary: oklch(0.92 0.21 125);
   --primary-foreground: oklch(0.1 0.01 280);
   --secondary: oklch(0.18 0.01 280);
   --secondary-foreground: oklch(0.97 0.005 280);
-  --muted: oklch(0.15 0.008 280);
+  --muted: oklch(0.16 0.008 280);
   --muted-foreground: oklch(0.62 0.01 280);
   --accent: oklch(0.72 0.27 350);
   --accent-foreground: oklch(0.97 0.005 280);
@@ -65,12 +135,17 @@
   --border: oklch(0.22 0.01 280);
   --input: oklch(0.18 0.01 280);
   --ring: oklch(0.92 0.21 125 / 0.5);
+
+  --surface: oklch(0.08 0.005 280);
+  --surface-2: oklch(0.12 0.008 280);
+  --hairline: oklch(0.22 0.01 280);
+
   --chart-1: oklch(0.92 0.21 125);
   --chart-2: oklch(0.72 0.27 350);
   --chart-3: oklch(0.85 0.18 195);
   --chart-4: oklch(0.82 0.18 75);
   --chart-5: oklch(0.65 0.25 305);
-  --sidebar: oklch(0.11 0.008 280);
+  --sidebar: oklch(0.12 0.008 280);
   --sidebar-foreground: oklch(0.97 0.005 280);
   --sidebar-primary: oklch(0.92 0.21 125);
   --sidebar-primary-foreground: oklch(0.1 0.01 280);
@@ -79,22 +154,17 @@
   --sidebar-border: oklch(0.22 0.01 280);
   --sidebar-ring: oklch(0.92 0.21 125 / 0.5);
 
-  /* Custom palette tokens */
   --lime: #d4ff3a;
   --magenta: #ff3a8c;
   --cyan: #3afff0;
   --amber: #ffb13a;
   --violet: #b988ff;
-  --ink-900: #08080c;
-  --ink-800: #0e0e16;
-  --ink-700: #14141f;
-  --ink-600: #1c1c2a;
-  --ink-500: #2a2a3c;
-}
 
-.dark {
-  --background: oklch(0.07 0.005 280);
-  --foreground: oklch(0.97 0.005 280);
+  --ink-900: var(--surface);
+  --ink-800: var(--surface-2);
+  --ink-700: var(--muted);
+  --ink-600: var(--hairline);
+  --ink-500: var(--border);
 }
 
 @layer base {
@@ -108,32 +178,32 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: var(--ink-900);
+    background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-body), system-ui, sans-serif;
     overflow-x: hidden;
     cursor: none;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
 
   ::selection {
     background-color: var(--lime);
-    color: var(--ink-900);
+    color: var(--background);
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: var(--ink-900);
+    background: var(--background);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--ink-600);
+    background: var(--hairline);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--ink-500);
+    background: var(--border);
   }
 }
 
@@ -169,22 +239,31 @@
     background-color: var(--cyan);
   }
   .bg-ink-900 {
-    background-color: var(--ink-900);
+    background-color: var(--surface);
   }
   .bg-ink-800 {
-    background-color: var(--ink-800);
+    background-color: var(--surface-2);
   }
   .bg-ink-700 {
-    background-color: var(--ink-700);
+    background-color: var(--muted);
   }
   .bg-ink-600 {
-    background-color: var(--ink-600);
+    background-color: var(--hairline);
   }
   .border-ink-600 {
-    border-color: var(--ink-600);
+    border-color: var(--hairline);
   }
   .border-ink-500 {
-    border-color: var(--ink-500);
+    border-color: var(--border);
+  }
+  .bg-surface {
+    background-color: var(--surface);
+  }
+  .bg-surface-2 {
+    background-color: var(--surface-2);
+  }
+  .border-hairline {
+    border-color: var(--hairline);
   }
 
   .grain {
@@ -224,19 +303,19 @@
   }
 
   .glow-lime {
-    box-shadow: 0 0 24px -4px rgba(212, 255, 58, 0.45),
-      0 0 60px -10px rgba(212, 255, 58, 0.25);
+    box-shadow: 0 0 24px -4px color-mix(in oklch, var(--lime) 50%, transparent),
+      0 0 60px -10px color-mix(in oklch, var(--lime) 30%, transparent);
   }
   .glow-magenta {
-    box-shadow: 0 0 24px -4px rgba(255, 58, 140, 0.45),
-      0 0 60px -10px rgba(255, 58, 140, 0.25);
+    box-shadow: 0 0 24px -4px color-mix(in oklch, var(--magenta) 50%, transparent),
+      0 0 60px -10px color-mix(in oklch, var(--magenta) 30%, transparent);
   }
   .glow-cyan {
-    box-shadow: 0 0 24px -4px rgba(58, 255, 240, 0.4),
-      0 0 60px -10px rgba(58, 255, 240, 0.2);
+    box-shadow: 0 0 24px -4px color-mix(in oklch, var(--cyan) 45%, transparent),
+      0 0 60px -10px color-mix(in oklch, var(--cyan) 25%, transparent);
   }
   .text-glow-lime {
-    text-shadow: 0 0 20px rgba(212, 255, 58, 0.4);
+    text-shadow: 0 0 20px color-mix(in oklch, var(--lime) 40%, transparent);
   }
 
   .mask-fade-edges {

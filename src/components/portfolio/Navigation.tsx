@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { navItems, profile } from "@/lib/portfolio-data";
 import { Magnetic } from "./Magnetic";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -50,9 +51,11 @@ export function Navigation() {
           animate={{
             width: scrolled ? "min(92vw, 720px)" : "min(92vw, 1100px)",
             backgroundColor: scrolled
-              ? "rgba(8,8,12,0.7)"
-              : "rgba(8,8,12,0.0)",
-            borderColor: scrolled ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0)",
+              ? "var(--surface)"
+              : "rgba(0,0,0,0)",
+            borderColor: scrolled
+              ? "var(--hairline)"
+              : "rgba(0,0,0,0)",
             backdropFilter: scrolled ? "blur(16px)" : "blur(0px)",
           }}
           transition={{ type: "spring", stiffness: 280, damping: 30 }}
@@ -104,18 +107,21 @@ export function Navigation() {
             ))}
           </div>
 
-          {/* Right CTA */}
-          <Magnetic
-            as="a"
-            href={`mailto:${profile.email}`}
-            strength={0.3}
-            dataCursor="hover"
-            dataCursorLabel="Mail"
-            className="hidden md:flex items-center gap-2 rounded-full border border-lime/40 bg-lime/10 px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-lime hover:bg-lime/20 transition-colors"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-lime animate-pulse" />
-            Available
-          </Magnetic>
+          {/* Right side: theme toggle + CTA */}
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Magnetic
+              as="a"
+              href={`mailto:${profile.email}`}
+              strength={0.3}
+              dataCursor="hover"
+              dataCursorLabel="Mail"
+              className="hidden md:flex items-center gap-2 rounded-full border border-lime/40 bg-lime/10 px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-lime hover:bg-lime/20 transition-colors"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-lime animate-pulse" />
+              Available
+            </Magnetic>
+          </div>
 
           {/* Mobile toggle */}
           <button
@@ -147,8 +153,11 @@ export function Navigation() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99] bg-ink-900/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-2"
+            className="fixed inset-0 z-[99] bg-background/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-2"
           >
+            <div className="absolute top-5 right-5">
+              <ThemeToggle />
+            </div>
             {navItems.map((item, i) => (
               <motion.button
                 key={item.id}

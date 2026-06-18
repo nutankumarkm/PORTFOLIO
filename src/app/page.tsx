@@ -15,7 +15,7 @@ import { Footer } from "@/components/portfolio/Footer";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen flex flex-col bg-ink-900">
+    <div className="relative min-h-screen flex flex-col bg-background">
       <IntroLoader />
       <Cursor />
       <ScrollProgress />
