@@ -6,8 +6,16 @@ import { profile, navItems } from "@/lib/portfolio-data";
 export function Footer() {
   const year = new Date().getFullYear();
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  const scrollTo = (id: string, isRoute?: boolean) => {
+    if (isRoute) {
+      window.location.href = `/${id}`;
+    } else {
+      if (window.location.pathname !== "/" && window.location.pathname !== "/portfolio") {
+        window.location.href = `/#${id}`;
+      } else {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   return (
@@ -50,7 +58,7 @@ export function Footer() {
               {navItems.map((item) => (
                 <li key={item.id}>
                   <button
-                    onClick={() => scrollTo(item.id)}
+                    onClick={() => scrollTo(item.id, item.isRoute)}
                     data-cursor="hover"
                     className="group inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >

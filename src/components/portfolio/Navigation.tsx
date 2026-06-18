@@ -34,9 +34,17 @@ export function Navigation() {
     return () => observer.disconnect();
   }, []);
 
-  const handleNav = (id: string) => {
+  const handleNav = (id: string, isRoute?: boolean) => {
     setMenuOpen(false);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    if (isRoute) {
+      window.location.href = `/${id}`;
+    } else {
+      if (window.location.pathname !== "/" && window.location.pathname !== "/portfolio") {
+        window.location.href = `/#${id}`;
+      } else {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   return (
@@ -98,7 +106,7 @@ export function Navigation() {
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => handleNav(item.id)}
+                onClick={() => handleNav(item.id, item.isRoute)}
                 data-cursor="hover"
                 className="relative px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition-colors"
               >
@@ -179,7 +187,7 @@ export function Navigation() {
             {navItems.map((item, i) => (
               <motion.button
                 key={item.id}
-                onClick={() => handleNav(item.id)}
+                onClick={() => handleNav(item.id, item.isRoute)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}

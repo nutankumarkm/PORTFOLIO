@@ -226,6 +226,7 @@ export const navItems = [
   { id: "experience", label: "Work", index: "04" },
   { id: "projects", label: "Projects", index: "05" },
   { id: "contact", label: "Contact", index: "06" },
+  { id: "blog", label: "Blog", index: "07", isRoute: true },
 ];
 
 export type AccentColor = "lime" | "cyan" | "magenta" | "amber" | "violet";
