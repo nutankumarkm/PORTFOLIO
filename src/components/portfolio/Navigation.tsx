@@ -67,7 +67,7 @@ export function Navigation() {
             onClick={() => handleNav("hero")}
             strength={0.3}
             dataCursor="hover"
-            className="flex items-center gap-2.5"
+            className="flex items-center"
             ariaLabel="Go to top"
           >
             <div className="relative h-8 w-8 flex items-center justify-center">
@@ -80,9 +80,17 @@ export function Navigation() {
                 {profile.initials}
               </span>
             </div>
-            <span className="hidden md:block font-mono-display text-[11px] uppercase tracking-[0.25em] text-foreground/80">
+            <motion.span
+              animate={{
+                width: scrolled ? 0 : "auto",
+                opacity: scrolled ? 0 : 1,
+                marginLeft: scrolled ? 0 : 10,
+              }}
+              transition={{ duration: 0.3 }}
+              className="hidden md:block overflow-hidden whitespace-nowrap font-mono-display text-[11px] uppercase tracking-[0.25em] text-foreground/80"
+            >
               Nutankumar.KM
-            </span>
+            </motion.span>
           </Magnetic>
 
           {/* Desktop nav items */}
@@ -108,19 +116,29 @@ export function Navigation() {
           </div>
 
           {/* Right side: theme toggle + CTA */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             <ThemeToggle />
-            <Magnetic
-              as="a"
-              href={`mailto:${profile.email}`}
-              strength={0.3}
-              dataCursor="hover"
-              dataCursorLabel="Mail"
-              className="hidden md:flex items-center gap-2 rounded-full border border-lime/40 bg-lime/10 px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-lime hover:bg-lime/20 transition-colors"
+            <motion.div
+              animate={{
+                width: scrolled ? 0 : "auto",
+                opacity: scrolled ? 0 : 1,
+                marginLeft: scrolled ? 0 : 8,
+              }}
+              transition={{ duration: 0.3 }}
+              className="hidden md:flex overflow-hidden whitespace-nowrap"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-lime animate-pulse" />
-              Available
-            </Magnetic>
+              <Magnetic
+                as="a"
+                href={`mailto:${profile.email}`}
+                strength={0.3}
+                dataCursor="hover"
+                dataCursorLabel="Mail"
+                className="flex items-center gap-2 rounded-full border border-lime/40 bg-lime/10 px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-lime hover:bg-lime/20 transition-colors"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-lime animate-pulse" />
+                Available
+              </Magnetic>
+            </motion.div>
           </div>
 
           {/* Mobile toggle */}
