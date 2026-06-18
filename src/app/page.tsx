@@ -12,6 +12,7 @@ import { Projects } from "@/components/portfolio/Projects";
 import { Achievements } from "@/components/portfolio/Achievements";
 import { Contact } from "@/components/portfolio/Contact";
 import { Footer } from "@/components/portfolio/Footer";
+import { ChatWidget } from "@/components/portfolio/ChatWidget";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Cursor />
       <ScrollProgress />
       <Navigation />
+      <ChatWidget />
 
       <main className="flex-1">
         <Hero />
