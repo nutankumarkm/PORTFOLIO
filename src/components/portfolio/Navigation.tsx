@@ -57,7 +57,7 @@ export function Navigation() {
       >
         <motion.nav
           animate={{
-            width: scrolled ? "min(92vw, 720px)" : "min(92vw, 1100px)",
+            width: scrolled ? "min(92vw, 800px)" : "min(92vw, 1100px)",
             backgroundColor: scrolled
               ? "var(--surface)"
               : "rgba(0,0,0,0)",
@@ -108,7 +108,9 @@ export function Navigation() {
                 key={item.id}
                 onClick={() => handleNav(item.id, item.isRoute)}
                 data-cursor="hover"
-                className="relative px-3.5 py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition-colors"
+                className={`relative py-1.5 font-mono-display text-[11px] uppercase tracking-[0.18em] text-muted-foreground hover:text-foreground transition-colors ${
+                  scrolled ? "px-2.5" : "px-3.5"
+                }`}
               >
                 <span className="text-lime/60 mr-1.5">{item.index}</span>
                 {item.label}
