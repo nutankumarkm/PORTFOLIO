@@ -149,38 +149,55 @@ export function Hero() {
         </motion.div>
 
         {/* Name — kinetic reveal */}
-        <h1 className="font-display font-bold text-center leading-[0.85] tracking-tight">
-          <span className="block text-[clamp(2.6rem,11vw,8.5rem)]">
+        <h1 className="group relative font-display font-bold text-center leading-none tracking-tight text-[clamp(2.2rem,8vw,3.6rem)] md:text-[clamp(3.5rem,5.5vw,5.2rem)] flex flex-col md:flex-row items-center justify-center gap-y-1 md:gap-x-4 select-none">
+          {/* Subtle side glowing line-caps that appear on hover */}
+          <div className="absolute -left-6 top-1/2 -translate-y-1/2 h-8 w-px bg-gradient-to-t from-transparent via-lime/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:block" />
+          <div className="absolute -right-6 top-1/2 -translate-y-1/2 h-8 w-px bg-gradient-to-t from-transparent via-lime/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:block" />
+
+          {/* First Name (Solid) */}
+          <span className="block">
             {firstName.map((ch, i) => (
               <motion.span
                 key={`f-${i}`}
                 initial={{ y: "110%", opacity: 0, rotateX: -90 }}
                 animate={{ y: 0, opacity: 1, rotateX: 0 }}
                 transition={{
-                  delay: 2 + i * 0.05,
+                  delay: 2 + i * 0.04,
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="inline-block"
-                style={{ transformOrigin: "bottom" }}
+                whileHover={{
+                  y: -8,
+                  scale: 1.12,
+                  color: "var(--lime)",
+                  transition: { type: "spring", stiffness: 400, damping: 12 }
+                }}
+                className="inline-block origin-bottom cursor-default"
               >
                 {ch}
               </motion.span>
             ))}
           </span>
-          <span className="block text-[clamp(2.6rem,11vw,8.5rem)] gradient-text">
+
+          {/* Last Name (Gradient) */}
+          <span className="block gradient-text">
             {lastName.map((ch, i) => (
               <motion.span
                 key={`l-${i}`}
                 initial={{ y: "110%", opacity: 0, rotateX: -90 }}
                 animate={{ y: 0, opacity: 1, rotateX: 0 }}
                 transition={{
-                  delay: 2.15 + i * 0.05,
+                  delay: 2.15 + i * 0.04,
                   duration: 0.7,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="inline-block"
-                style={{ transformOrigin: "bottom" }}
+                whileHover={{
+                  y: -8,
+                  scale: 1.12,
+                  filter: "drop-shadow(0 0 10px var(--lime))",
+                  transition: { type: "spring", stiffness: 400, damping: 12 }
+                }}
+                className="inline-block origin-bottom cursor-default"
               >
                 {ch}
               </motion.span>

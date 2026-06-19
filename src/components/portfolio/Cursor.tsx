@@ -6,7 +6,7 @@ import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motio
 type CursorVariant = "default" | "hover" | "view" | "drag" | "text";
 
 const subscribeTouch = (cb: () => void) => {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === "undefined") return () => { };
   const mq = window.matchMedia("(pointer: coarse)");
   mq.addEventListener("change", cb);
   return () => mq.removeEventListener("change", cb);
@@ -127,8 +127,8 @@ export function Cursor() {
               variant === "default"
                 ? "rgba(212,255,58,0)"
                 : variant === "view"
-                ? "rgba(212,255,58,0.12)"
-                : "rgba(212,255,58,0.06)",
+                  ? "rgba(212,255,58,0.12)"
+                  : "rgba(212,255,58,0.06)",
             fontSize: 9,
             color: "#d4ff3a",
           }}
