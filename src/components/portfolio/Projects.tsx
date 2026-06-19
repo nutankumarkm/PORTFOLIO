@@ -21,7 +21,7 @@ export function Projects() {
   return (
     <section
       id="projects"
-      className="relative py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       <div
         className="absolute top-10 right-0 font-display text-[18vw] font-bold text-foreground/[0.02] leading-none pointer-events-none select-none"

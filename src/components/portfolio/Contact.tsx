@@ -93,7 +93,7 @@ export function Contact() {
   return (
     <section
       id="contact"
-      className="relative py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden bg-ink-950/20"
+      className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 overflow-hidden bg-ink-950/20"
     >
       {/* Background morph blobs */}
       <MorphBlobLines

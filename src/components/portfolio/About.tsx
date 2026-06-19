@@ -10,7 +10,7 @@ export function About() {
   return (
     <section
       id="about"
-      className="relative py-24 md:py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 overflow-hidden"
     >
       {/* Background watermark */}
       <div

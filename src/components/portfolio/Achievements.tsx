@@ -5,7 +5,7 @@ import { achievements, accentHex, type AccentColor } from "@/lib/portfolio-data"
 
 export function Achievements() {
   return (
-    <section className="relative py-12 md:py-16 px-4 sm:px-6 lg:px-8">
+    <section id="achievements" className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
         <div className="flex items-center gap-4 mb-8">
           <span className="font-mono-display text-[11px] uppercase tracking-[0.3em] text-amber">

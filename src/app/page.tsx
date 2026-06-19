@@ -14,6 +14,7 @@ import { Achievements } from "@/components/portfolio/Achievements";
 import { Contact } from "@/components/portfolio/Contact";
 import { Footer } from "@/components/portfolio/Footer";
 import { ChatWidget } from "@/components/portfolio/ChatWidget";
+import { ScrollSnapManager } from "@/components/portfolio/ScrollSnapManager";
 
 export default function Home() {
   return (
@@ -23,6 +24,7 @@ export default function Home() {
       <ScrollProgress />
       <Navigation />
       <ChatWidget />
+      <ScrollSnapManager />
 
       <main className="flex-1">
         <Hero />

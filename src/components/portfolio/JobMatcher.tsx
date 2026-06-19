@@ -196,7 +196,7 @@ export function JobMatcher() {
   };
 
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 border-t border-hairline overflow-hidden bg-ink-950/10">
+    <section id="jobmatcher" className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 border-t border-hairline overflow-hidden bg-ink-950/10">
       {/* Dynamic blurred bg glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[140px] opacity-10 rounded-full pointer-events-none transition-colors duration-700"
