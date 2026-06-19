@@ -7,6 +7,7 @@ import { Navigation } from "@/components/portfolio/Navigation";
 import { Hero } from "@/components/portfolio/Hero";
 import { About } from "@/components/portfolio/About";
 import { Skills } from "@/components/portfolio/Skills";
+import { JobMatcher } from "@/components/portfolio/JobMatcher";
 import { Experience } from "@/components/portfolio/Experience";
 import { Projects } from "@/components/portfolio/Projects";
 import { Achievements } from "@/components/portfolio/Achievements";
@@ -27,6 +28,7 @@ export default function Home() {
         <Hero />
         <About />
         <Skills />
+        <JobMatcher />
         <Experience />
         <Projects />
         <Achievements />

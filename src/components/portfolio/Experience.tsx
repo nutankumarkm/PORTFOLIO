@@ -7,6 +7,7 @@ import { SectionHeading } from "./SectionHeading";
 const accentByIndex: AccentColor[] = ["lime", "cyan"];
 
 export function Experience() {
+
   return (
     <section
       id="experience"

@@ -12,6 +12,7 @@ export const profile = {
   email: "nutankumarkm@gmail.com",
   phone: "+91 6363393589",
   linkedin: "https://linkedin.com/in/nutankumarkm",
+  github: "https://github.com/nutankumarkm",
   tagline:
     "I build production AI systems — RAG pipelines, autonomous agents, and cross-platform products that ship.",
   blurb:
@@ -21,7 +22,7 @@ export const profile = {
 
 export const heroMetrics = [
   { value: "120ms", label: "RAG query latency", accent: "lime" },
-  { value: "4", label: "Autonomous agents shipped", accent: "cyan" },
+  { value: "4", label: "AI Agents Shipped", accent: "cyan" },
   { value: "8.0", label: "B.E. CGPA / 10", accent: "magenta" },
   { value: "150ms", label: "Raft commit latency", accent: "amber" },
 ];
@@ -153,6 +154,7 @@ export const projects = [
       { label: "Agent type", value: "Multi-step" },
     ],
     year: "2025",
+    github: "https://github.com/nutankumarkm/mcp-developer-assistant",
   },
   {
     title: "Fine-Tuned Domain LLMs",
@@ -166,6 +168,7 @@ export const projects = [
       { label: "Domain", value: "Medical, Legal" },
     ],
     year: "2025",
+    github: "https://github.com/nutankumarkm/domain-llms",
   },
   {
     title: "AI Proctoring System",
@@ -179,6 +182,7 @@ export const projects = [
       { label: "Frontend", value: "Flutter" },
     ],
     year: "2024",
+    github: "https://github.com/nutankumarkm/ai-proctoring",
   },
   {
     title: "Raft Distributed Key-Value Store",
@@ -192,6 +196,7 @@ export const projects = [
       { label: "Recovery", value: "100%" },
     ],
     year: "2024",
+    github: "https://github.com/nutankumarkm/raft-kv-store",
   },
 ];
 

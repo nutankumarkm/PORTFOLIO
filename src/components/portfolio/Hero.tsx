@@ -211,7 +211,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.8, duration: 0.7 }}
-          className="mt-8 max-w-[min(92vw,580px)] text-center text-base sm:text-lg text-muted-foreground leading-relaxed"
+          className="mt-8 max-w-[min(92vw,580px)] text-center text-base sm:text-lg text-muted-foreground leading-relaxed min-h-[3.5rem]"
         >
           {profile.tagline}
         </motion.p>
@@ -220,8 +220,8 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 3, duration: 0.6 }}
-          className="mt-10 flex flex-col sm:flex-row gap-3 items-center"
+          transition={{ delay: 3.1, duration: 0.6 }}
+          className="mt-6 flex flex-col sm:flex-row gap-3 items-center"
         >
           <Magnetic
             as="button"
@@ -275,7 +275,7 @@ export function Hero() {
               >
                 {m.value}
               </div>
-              <div className="mt-1 font-mono-display text-[9px] uppercase tracking-[0.15em] text-muted-foreground hidden sm:block">
+              <div className="mt-1 font-mono-display text-[7px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.15em] text-muted-foreground block text-center leading-normal">
                 {m.label}
               </div>
             </motion.div>
