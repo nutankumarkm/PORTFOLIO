@@ -60,58 +60,53 @@
 }
 
 /* ============================ LIGHT (default) ============================ */
-/* Warm cream-paper aesthetic — accents (lime/cyan/magenta) stay vivid */
+/* Premium White & Blue aesthetic — clean backgrounds, high contrast, elegant blues */
 :root {
   --radius: 0.625rem;
-  --background: oklch(0.97 0.008 80);
-  /* warm paper */
-  --foreground: oklch(0.16 0.01 280);
-  /* deep ink */
-  --card: oklch(0.99 0.005 80);
-  --card-foreground: oklch(0.16 0.01 280);
-  --popover: oklch(0.99 0.005 80);
-  --popover-foreground: oklch(0.16 0.01 280);
-  --primary: oklch(0.55 0.18 125);
-  --primary-foreground: oklch(0.99 0.005 80);
-  --secondary: oklch(0.93 0.008 80);
-  --secondary-foreground: oklch(0.16 0.01 280);
-  --muted: oklch(0.93 0.008 80);
-  --muted-foreground: oklch(0.42 0.012 280);
-  --accent: oklch(0.55 0.22 350);
-  --accent-foreground: oklch(0.99 0.005 80);
+  --background: oklch(0.99 0.003 250); /* cool white */
+  --foreground: oklch(0.12 0.05 250); /* deep midnight navy */
+  --card: oklch(1 0 0); /* pure white */
+  --card-foreground: oklch(0.12 0.05 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.12 0.05 250);
+  --primary: oklch(0.55 0.22 250); /* electric cobalt blue */
+  --primary-foreground: oklch(0.99 0.003 250);
+  --secondary: oklch(0.95 0.01 250); /* soft ice-blue/cool gray */
+  --secondary-foreground: oklch(0.15 0.05 250);
+  --muted: oklch(0.95 0.01 250);
+  --muted-foreground: oklch(0.45 0.04 250); /* slate blue */
+  --accent: oklch(0.55 0.22 250); /* cobalt blue */
+  --accent-foreground: oklch(0.99 0.003 250);
   --destructive: oklch(0.6 0.22 22);
-  --border: oklch(0.88 0.01 80);
-  --input: oklch(0.92 0.008 80);
-  --ring: oklch(0.55 0.18 125 / 0.45);
+  --border: oklch(0.88 0.018 250); /* delicate cool border */
+  --input: oklch(0.92 0.012 250);
+  --ring: oklch(0.55 0.22 250 / 0.4);
 
   /* Surface tokens — replace the old ink-* scale */
-  --surface: oklch(0.97 0.008 80);
-  /* page bg */
-  --surface-2: oklch(0.99 0.005 80);
-  /* card */
-  --hairline: oklch(0.88 0.01 80);
-  /* divider */
+  --surface: oklch(0.99 0.003 250); /* page bg */
+  --surface-2: oklch(1 0 0); /* card */
+  --hairline: oklch(0.9 0.015 250); /* divider */
 
-  --chart-1: oklch(0.55 0.18 125);
-  --chart-2: oklch(0.55 0.22 350);
-  --chart-3: oklch(0.6 0.16 195);
-  --chart-4: oklch(0.7 0.17 75);
-  --chart-5: oklch(0.5 0.22 305);
-  --sidebar: oklch(0.99 0.005 80);
-  --sidebar-foreground: oklch(0.16 0.01 280);
-  --sidebar-primary: oklch(0.55 0.18 125);
-  --sidebar-primary-foreground: oklch(0.99 0.005 80);
-  --sidebar-accent: oklch(0.93 0.008 80);
-  --sidebar-accent-foreground: oklch(0.16 0.01 280);
-  --sidebar-border: oklch(0.88 0.01 80);
-  --sidebar-ring: oklch(0.55 0.18 125 / 0.45);
+  --chart-1: oklch(0.55 0.22 250);
+  --chart-2: oklch(0.65 0.18 220);
+  --chart-3: oklch(0.48 0.2 265);
+  --chart-4: oklch(0.75 0.12 210);
+  --chart-5: oklch(0.35 0.12 250);
+  --sidebar: oklch(0.99 0.003 250);
+  --sidebar-foreground: oklch(0.12 0.05 250);
+  --sidebar-primary: oklch(0.55 0.22 250);
+  --sidebar-primary-foreground: oklch(0.99 0.003 250);
+  --sidebar-accent: oklch(0.95 0.01 250);
+  --sidebar-accent-foreground: oklch(0.12 0.05 250);
+  --sidebar-border: oklch(0.88 0.018 250);
+  --sidebar-ring: oklch(0.55 0.22 250 / 0.4);
 
-  /* Accent palette — kept identical across themes for brand consistency */
-  --lime: #5fae1e;
-  --magenta: #d6277f;
-  --cyan: #0ba39a;
-  --amber: #c47800;
-  --violet: #7c3aed;
+  /* Accent palette — mapped to a harmonious range of blues/indigos in light mode */
+  --lime: #2563eb;       /* Electric blue (primary accent) */
+  --magenta: #4f46e5;    /* Vibrant Indigo */
+  --cyan: #0ea5e9;       /* Sky Blue */
+  --amber: #0284c7;      /* Ocean Blue */
+  --violet: #6366f1;     /* Periwinkle Blue */
 
   --ink-900: var(--surface);
   --ink-800: var(--surface-2);
@@ -119,6 +114,7 @@
   --ink-600: var(--hairline);
   --ink-500: var(--border);
 }
+
 
 /* ============================ DARK ============================ */
 .dark {
