@@ -36,11 +36,15 @@ const CONNECTIONS: [number, number][] = [
 
 const POSE_LABEL: Record<HandPose, string> = {
   none: "Hold your hand up",
-  open: "Open palm — flick to move",
-  pinch: "Pinch — selecting",
+  open: "Open palm",
+  pinchIndex: "Thumb + index — scrolling up",
+  pinchMiddle: "Thumb + middle — scrolling down",
+  pinchPinky: "Thumb + pinky — selecting",
   fist: "Fist — paused",
   point: "Pointing",
 };
+
+const PINCH_POSES: HandPose[] = ["pinchIndex", "pinchMiddle", "pinchPinky"];
 
 // Anything the pinch is allowed to press. Without this a pinch over empty page
 // would click whatever container happens to sit under the cursor.
@@ -128,9 +132,9 @@ export function HandControl() {
       }
 
       if (event.type === "swipe") {
-        // Flick semantics, same as a touch screen: pushing the content up
-        // moves you forward through the page.
-        const step = event.direction === "up" ? 1 : -1;
+        // Same sense as the arrow keys: "up" goes to the previous section,
+        // "down" goes to the next one.
+        const step = event.direction === "up" ? -1 : 1;
         const next = Math.min(
           STAGE_SECTIONS.length - 1,
           Math.max(0, getStageIndex() + step)
@@ -223,14 +227,14 @@ export function HandControl() {
         {live && present && (
           <motion.div
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: pose === "pinch" ? 0.55 : 1 }}
+            animate={{ opacity: 1, scale: PINCH_POSES.includes(pose) ? 0.55 : 1 }}
             exit={{ opacity: 0, scale: 0.6 }}
             style={{ x, y }}
             className="pointer-events-none fixed left-0 top-0 z-[120] -ml-5 -mt-5 h-10 w-10"
           >
             <div
               className={`h-full w-full rounded-full border-2 transition-colors duration-150 ${
-                pose === "pinch"
+                PINCH_POSES.includes(pose)
                   ? "border-primary bg-primary/30"
                   : "border-primary/70 bg-primary/10"
               }`}

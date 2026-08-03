@@ -15,7 +15,14 @@
 
 import type { HandLandmarker, NormalizedLandmark } from "@mediapipe/tasks-vision";
 
-export type HandPose = "none" | "open" | "pinch" | "fist" | "point";
+export type HandPose =
+  | "none"
+  | "open"
+  | "pinchIndex"
+  | "pinchMiddle"
+  | "pinchPinky"
+  | "fist"
+  | "point";
 
 export interface HandState {
   /** Whether a hand is currently in frame. */
@@ -57,6 +64,8 @@ export interface HandProgress {
 const WRIST = 0;
 const THUMB_TIP = 4;
 const INDEX_TIP = 8;
+const MIDDLE_TIP = 12;
+const PINKY_TIP = 20;
 const MIDDLE_MCP = 9;
 
 // Each fingertip paired with the joint two down the chain. With the hand held
@@ -67,6 +76,10 @@ const FINGERS: [tip: number, pip: number][] = [
   [16, 14],
   [20, 18],
 ];
+
+// How close the thumb tip has to get to a fingertip, relative to palm span,
+// to count as that finger being pinched.
+const PINCH_RATIO = 0.55;
 
 const distance = (a: NormalizedLandmark, b: NormalizedLandmark) =>
   Math.hypot(a.x - b.x, a.y - b.y);
@@ -86,17 +99,36 @@ export function classifyPose(points: NormalizedLandmark[]): HandPose {
   );
   const extended = [indexUp, middleUp, ringUp, pinkyUp].filter(Boolean).length;
 
-  // A closed fist also parks the thumb tip next to the index tip, so proximity
-  // alone would read every fist as a pinch and fire a click. Requiring the back
-  // fingers to stay up separates a deliberate pinch from a fist.
-  const backFingersUp = [middleUp, ringUp, pinkyUp].filter(Boolean).length;
+  // A closed fist also parks the thumb tip next to every curled fingertip, so
+  // proximity alone would read a fist as a pinch of whichever finger it lands
+  // closest to. Requiring the other two (non-thumb, non-target) fingers to
+  // stay up separates a deliberate pinch from a fist, and picking the closest
+  // match among the three keeps only one pinch active at a time.
+  const candidates: [HandPose, number][] = [];
   if (
-    distance(points[THUMB_TIP], points[INDEX_TIP]) / span < 0.55 &&
-    backFingersUp >= 2
+    [middleUp, ringUp, pinkyUp].filter(Boolean).length >= 2 &&
+    distance(points[THUMB_TIP], points[INDEX_TIP]) / span < PINCH_RATIO
   ) {
-    return "pinch";
+    candidates.push(["pinchIndex", distance(points[THUMB_TIP], points[INDEX_TIP])]);
+  }
+  if (
+    [indexUp, ringUp, pinkyUp].filter(Boolean).length >= 2 &&
+    distance(points[THUMB_TIP], points[MIDDLE_TIP]) / span < PINCH_RATIO
+  ) {
+    candidates.push(["pinchMiddle", distance(points[THUMB_TIP], points[MIDDLE_TIP])]);
+  }
+  if (
+    [indexUp, middleUp, ringUp].filter(Boolean).length >= 2 &&
+    distance(points[THUMB_TIP], points[PINKY_TIP]) / span < PINCH_RATIO
+  ) {
+    candidates.push(["pinchPinky", distance(points[THUMB_TIP], points[PINKY_TIP])]);
+  }
+  if (candidates.length) {
+    candidates.sort((a, b) => a[1] - b[1]);
+    return candidates[0][0];
   }
 
+  const backFingersUp = [middleUp, ringUp, pinkyUp].filter(Boolean).length;
   if (extended >= 4) return "open";
   if (extended === 0) return "fist";
   if (indexUp && backFingersUp === 0) return "point";
@@ -111,13 +143,9 @@ const DETECT_FPS = 24;
 // the fraction of the gap to the new reading taken per update.
 const CURSOR_EASE = 0.35;
 
-// A swipe has to cover this much of the frame height, this fast, to count.
-const SWIPE_DISTANCE = 0.22;
-const SWIPE_WINDOW_MS = 400;
-const SWIPE_COOLDOWN_MS = 900;
-
-// Pinch has to release before it can fire again, so a held pinch is one click.
-const CLICK_COOLDOWN_MS = 400;
+// A pinch has to release before it can fire again, so a held pinch is one
+// scroll or one click rather than a repeat every frame it stays closed.
+const GESTURE_COOLDOWN_MS = 400;
 
 const WASM_PATH = "/mediapipe/wasm";
 const MODEL_PATH = "/mediapipe/hand_landmarker.task";
@@ -290,10 +318,10 @@ export async function startHandControl({
   const cursor = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   let seeded = false;
 
-  let pinching = false;
-  let lastClick = 0;
-  let lastSwipe = 0;
-  const trail: { y: number; t: number }[] = [];
+  // Which of the three pinches (if any) is currently held, so a sustained
+  // pinch fires once and has to release before it can fire again.
+  let activePinch: HandPose | null = null;
+  let lastGesture = 0;
 
   const tick = (time: number) => {
     if (stopped) return;
@@ -316,8 +344,7 @@ export async function startHandControl({
     }
 
     if (!points) {
-      trail.length = 0;
-      pinching = false;
+      activePinch = null;
       onEvent({
         type: "state",
         state: { present: false, pose: "none", x: cursor.x, y: cursor.y, landmarks: null },
@@ -341,34 +368,24 @@ export async function startHandControl({
       cursor.y += (targetY - cursor.y) * CURSOR_EASE;
     }
 
-    // Pinch closes -> one click. It has to open again before the next.
-    if (pose === "pinch" && !pinching) {
-      pinching = true;
-      if (gesturesEnabled && time - lastClick > CLICK_COOLDOWN_MS) {
-        lastClick = time;
-        onEvent({ type: "click", x: cursor.x, y: cursor.y });
-      }
-    } else if (pose !== "pinch") {
-      pinching = false;
-    }
+    // Thumb to index scrolls up, thumb to middle scrolls down, thumb to pinky
+    // selects. Each fires once on the rising edge of its pinch — it has to
+    // fully release before the same (or a different) pinch can fire again.
+    const isPinch =
+      pose === "pinchIndex" || pose === "pinchMiddle" || pose === "pinchPinky";
 
-    // Swipes are only read off an open palm, so moving the hand back down after
-    // a swipe (usually a relaxed or closed hand) doesn't bounce you backwards.
-    if (pose === "open") {
-      const wristY = points[WRIST].y;
-      trail.push({ y: wristY, t: time });
-      while (trail.length && time - trail[0].t > SWIPE_WINDOW_MS) trail.shift();
-
-      if (trail.length > 1 && gesturesEnabled && time - lastSwipe > SWIPE_COOLDOWN_MS) {
-        const travel = trail[trail.length - 1].y - trail[0].y;
-        if (Math.abs(travel) > SWIPE_DISTANCE) {
-          lastSwipe = time;
-          trail.length = 0;
-          onEvent({ type: "swipe", direction: travel > 0 ? "down" : "up" });
+    if (isPinch) {
+      if (activePinch !== pose) {
+        activePinch = pose;
+        if (gesturesEnabled && time - lastGesture > GESTURE_COOLDOWN_MS) {
+          lastGesture = time;
+          if (pose === "pinchIndex") onEvent({ type: "swipe", direction: "up" });
+          else if (pose === "pinchMiddle") onEvent({ type: "swipe", direction: "down" });
+          else onEvent({ type: "click", x: cursor.x, y: cursor.y });
         }
       }
     } else {
-      trail.length = 0;
+      activePinch = null;
     }
 
     onEvent({

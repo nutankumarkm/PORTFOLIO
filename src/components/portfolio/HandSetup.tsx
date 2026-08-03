@@ -21,8 +21,9 @@ interface HandSetupProps {
 }
 
 const GESTURES = [
-  { name: "Flick up / down", hint: "Open palm, flick to change section" },
-  { name: "Pinch", hint: "Thumb to index to select" },
+  { name: "Thumb + Index", hint: "Touch thumb to index finger to scroll up" },
+  { name: "Thumb + Middle", hint: "Touch thumb to middle finger to scroll down" },
+  { name: "Thumb + Pinky", hint: "Touch thumb to little finger to select" },
   { name: "Fist", hint: "Close your hand to pause" },
 ];
 
