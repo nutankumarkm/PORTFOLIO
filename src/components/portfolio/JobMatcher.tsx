@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, Sparkles, CheckCircle, Briefcase, Mail } from "lucide-react";
-import { skillGroups, accentHex, type AccentColor, profile } from "@/lib/portfolio-data";
+import { skillGroups, profile } from "@/lib/portfolio-data";
 
 interface MatchResult {
   score: number;
@@ -195,62 +195,70 @@ export function JobMatcher() {
     return `mailto:${profile.email}?subject=${subject}&body=${body}`;
   };
 
+  const strong = (result?.score ?? 0) > 75;
+
   return (
-    <section id="jobmatcher" className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 border-t border-hairline overflow-hidden bg-ink-950/10">
-      {/* Dynamic blurred bg glow */}
+    <section
+      id="jobmatcher"
+      className="relative overflow-hidden border-t border-base-300 px-4 py-20 sm:px-6 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:px-8 lg:py-0"
+    >
+      {/* Score-reactive background glow */}
       <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] blur-[140px] opacity-10 rounded-full pointer-events-none transition-colors duration-700"
-        style={{
-          background: result
-            ? result.score > 75
-              ? "var(--lime)"
-              : "var(--cyan)"
-            : "rgba(255,255,255,0.03)",
-        }}
+        className={`pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[140px] transition-colors duration-700 ${
+          result ? (strong ? "bg-primary" : "bg-accent") : "bg-base-content/20"
+        }`}
       />
 
       <div className="relative mx-auto max-w-6xl">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <span className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-cyan-acc">
+        <div className="mx-auto mb-14 max-w-2xl text-center">
+          <span className="font-mono-display text-[10px] uppercase tracking-[0.25em] text-accent">
             03.5 / Suitability
           </span>
-          <h2 className="mt-2 font-display text-3xl sm:text-5xl font-bold tracking-tight text-foreground">
+          <h2 className="mt-2 font-display text-3xl font-bold tracking-tight sm:text-5xl">
             Job Fit Analyzer
           </h2>
-          <p className="mt-4 text-sm sm:text-base text-muted-foreground">
-            Recruiter shortcut: Paste a job description below to instantly check compatibility, matched skill sets, and relevant projects.
+          <p className="mt-4 text-sm text-base-content/70 sm:text-base">
+            Recruiter shortcut: paste a job description below to instantly check
+            compatibility, matched skill sets, and relevant projects.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-14 items-start">
-          {/* Left Column: Input and Presets */}
+        <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
+          {/* Input */}
           <div className="flex flex-col gap-6">
-            <div className="relative bg-surface border border-hairline rounded-2xl p-5 shadow-xl">
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-                  <FileText className="h-3.5 w-3.5 text-cyan-acc" />
-                  Paste Job Description
-                </span>
-                {jdText && (
-                  <button
-                    onClick={() => setJdText("")}
-                    className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Clear
-                  </button>
-                )}
+            <div className="card border border-base-300 bg-base-200/50 shadow-xl backdrop-blur-md">
+              <div className="card-body">
+                <fieldset className="fieldset p-0">
+                  <legend className="fieldset-legend flex w-full items-center justify-between gap-2 font-mono-display text-[9px] uppercase tracking-wider">
+                    <span className="flex items-center gap-1.5">
+                      <FileText className="h-3.5 w-3.5 text-accent" />
+                      Paste Job Description
+                    </span>
+                    {jdText && (
+                      <button
+                        onClick={() => setJdText("")}
+                        className="btn btn-ghost btn-xs font-mono-display text-[9px] uppercase tracking-wider"
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </legend>
+                  <textarea
+                    value={jdText}
+                    onChange={(e) => setJdText(e.target.value)}
+                    placeholder="We are looking for an AI Engineer with experience building RAG pipelines, autonomous agents, and fine-tuning open-source models using LangChain and Python..."
+                    className="textarea textarea-lg h-44 w-full resize-none font-sans text-sm focus:textarea-accent"
+                  />
+                  <p className="label font-mono-display text-[9px] uppercase tracking-wider">
+                    Analyzed locally in your browser — nothing is uploaded.
+                  </p>
+                </fieldset>
               </div>
-              <textarea
-                value={jdText}
-                onChange={(e) => setJdText(e.target.value)}
-                placeholder="We are looking for an AI Engineer with experience building RAG pipelines, autonomous agents, and fine-tuning open-source models using LangChain and Python..."
-                className="w-full h-44 bg-ink-950/30 border border-hairline rounded-xl p-4 text-sm text-foreground placeholder-muted-foreground/60 focus:outline-none focus:border-cyan-acc focus:ring-1 focus:ring-cyan-acc transition-colors resize-none font-sans"
-              />
             </div>
 
             {/* Presets */}
             <div className="flex flex-col gap-2.5">
-              <span className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground">
+              <span className="font-mono-display text-[9px] uppercase tracking-wider text-base-content/60">
                 Or load a preset job description:
               </span>
               <div className="flex flex-wrap gap-2">
@@ -259,7 +267,7 @@ export function JobMatcher() {
                     key={preset.title}
                     onClick={() => applyPreset(preset.text)}
                     data-cursor="hover"
-                    className="rounded-xl border border-hairline bg-surface hover:bg-cyan-acc/5 hover:border-cyan-acc px-3.5 py-2 text-xs font-medium text-muted-foreground hover:text-cyan-acc transition-all"
+                    className="btn btn-outline btn-sm font-medium"
                   >
                     {preset.title}
                   </button>
@@ -268,7 +276,7 @@ export function JobMatcher() {
             </div>
           </div>
 
-          {/* Right Column: Compatibility Results */}
+          {/* Results */}
           <div className="h-full">
             <AnimatePresence mode="wait">
               {result ? (
@@ -278,120 +286,114 @@ export function JobMatcher() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-surface-2 border border-hairline rounded-2xl p-6 shadow-2xl relative overflow-hidden"
+                  className="card relative overflow-hidden border border-base-300 bg-base-200/60 shadow-2xl backdrop-blur-md"
                 >
-                  {/* Gauge & Score Header */}
-                  <div className="flex items-center gap-5 mb-6">
-                    {/* SVG Progress Ring */}
-                    <div className="relative h-20 w-20 flex-shrink-0">
-                      <svg className="w-full h-full transform -rotate-90">
-                        <circle
-                          cx="40"
-                          cy="40"
-                          r="34"
-                          className="stroke-ink-600/30 fill-none"
-                          strokeWidth="5"
-                        />
-                        <motion.circle
-                          cx="40"
-                          cy="40"
-                          r="34"
-                          className="fill-none"
-                          strokeWidth="5"
-                          strokeDasharray="213.6"
-                          initial={{ strokeDashoffset: 213.6 }}
-                          animate={{ strokeDashoffset: 213.6 - (213.6 * result.score) / 100 }}
-                          transition={{ duration: 0.8, ease: "easeOut" }}
-                          style={{
-                            stroke: result.score > 75 ? "var(--lime)" : "var(--cyan)",
-                          }}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex items-center justify-center font-display text-lg font-bold text-foreground">
-                        {result.score}%
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
-                        <Sparkles className="h-3 w-3 text-lime" /> Match Rating
-                      </span>
-                      <h4 className="text-base font-bold text-foreground mt-0.5">
-                        {result.score > 80
-                          ? "Excellent Candidate Match"
-                          : result.score > 60
-                          ? "Highly Qualified"
-                          : "Qualified Software Engineer"}
-                      </h4>
-                      <p className="text-[11px] text-muted-foreground mt-1 leading-relaxed">
-                        {result.summary}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Matched Badges */}
-                  <div className="mb-6">
-                    <span className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground block mb-2">
-                      Matched Competencies ({result.matchedKeywords.length})
-                    </span>
-                    <div className="flex flex-wrap gap-1.5">
-                      {result.matchedKeywords.length > 0 ? (
-                        result.matchedKeywords.map((k) => (
-                          <span
-                            key={k}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-mono border border-lime/30 bg-lime/5 text-lime"
-                          >
-                            <CheckCircle className="h-2.5 w-2.5" />
-                            {k}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">
-                          No direct framework keywords detected yet. Keep typing...
+                  <div className="card-body gap-6">
+                    {/* Score */}
+                    <div className="flex items-center gap-5">
+                      <div
+                        className={`radial-progress shrink-0 ${
+                          strong ? "text-primary" : "text-accent"
+                        }`}
+                        style={
+                          {
+                            "--value": result.score,
+                            "--size": "5rem",
+                            "--thickness": "5px",
+                          } as React.CSSProperties
+                        }
+                        role="progressbar"
+                        aria-valuenow={result.score}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                      >
+                        <span className="font-display text-lg font-bold text-base-content">
+                          {result.score}%
                         </span>
-                      )}
-                    </div>
-                  </div>
+                      </div>
 
-                  {/* Recommended Projects */}
-                  {result.recommendedProjects.length > 0 && (
-                    <div className="mb-6">
-                      <span className="font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground block mb-2">
-                        Relevant Projects & Proof
-                      </span>
-                      <div className="space-y-2">
-                        {result.recommendedProjects.map((p) => (
-                          <div
-                            key={p}
-                            className="flex items-center gap-2.5 bg-ink-950/20 border border-hairline rounded-xl p-3 text-xs"
-                          >
-                            <Briefcase className="h-4 w-4 text-cyan-acc flex-shrink-0" />
-                            <span className="font-medium text-foreground leading-snug">{p}</span>
-                          </div>
-                        ))}
+                      <div>
+                        <span className="flex items-center gap-1 font-mono-display text-[9px] uppercase tracking-wider text-base-content/60">
+                          <Sparkles className="h-3 w-3 text-primary" /> Match Rating
+                        </span>
+                        <h4 className="mt-0.5 text-base font-bold">
+                          {result.score > 80
+                            ? "Excellent Candidate Match"
+                            : result.score > 60
+                              ? "Highly Qualified"
+                              : "Qualified Software Engineer"}
+                        </h4>
+                        <p className="mt-1 text-[11px] leading-relaxed text-base-content/70">
+                          {result.summary}
+                        </p>
                       </div>
                     </div>
-                  )}
 
-                  {/* Hiring Action Button */}
-                  <a
-                    href={getMailtoLink()}
-                    data-cursor="hover"
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-lime py-3 text-sm font-bold text-background hover:scale-[1.02] active:scale-[0.98] transition-transform"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Email Nutankumar for this Role
-                  </a>
+                    {/* Matched competencies */}
+                    <div>
+                      <span className="mb-2 block font-mono-display text-[9px] uppercase tracking-wider text-base-content/60">
+                        Matched Competencies ({result.matchedKeywords.length})
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {result.matchedKeywords.length > 0 ? (
+                          result.matchedKeywords.map((k) => (
+                            <span
+                              key={k}
+                              className="badge badge-primary badge-soft badge-sm gap-1 font-mono-display text-[10px]"
+                            >
+                              <CheckCircle className="h-2.5 w-2.5" />
+                              {k}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs italic text-base-content/60">
+                            No direct framework keywords detected yet. Keep typing…
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Relevant projects */}
+                    {result.recommendedProjects.length > 0 && (
+                      <div>
+                        <span className="mb-2 block font-mono-display text-[9px] uppercase tracking-wider text-base-content/60">
+                          Relevant Projects & Proof
+                        </span>
+                        <ul className="list rounded-box bg-base-100/50">
+                          {result.recommendedProjects.map((p) => (
+                            <li key={p} className="list-row py-2.5">
+                              <Briefcase className="h-4 w-4 shrink-0 text-accent" />
+                              <span className="text-xs font-medium leading-snug">{p}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="card-actions">
+                      <a
+                        href={getMailtoLink()}
+                        data-cursor="hover"
+                        className="btn btn-primary btn-block gap-2 text-sm font-bold"
+                      >
+                        <Mail className="h-4 w-4" />
+                        Email Nutankumar for this Role
+                      </a>
+                    </div>
+                  </div>
                 </motion.div>
               ) : (
-                <div className="h-full min-h-[300px] border border-hairline border-dashed rounded-2xl flex flex-col items-center justify-center text-center p-6 text-muted-foreground bg-surface-2/20">
-                  <FileText className="h-10 w-10 text-muted-foreground/30 mb-3" />
-                  <p className="font-display text-sm font-medium text-foreground">
-                    Awaiting Job Description
-                  </p>
-                  <p className="text-xs max-w-xs mt-1">
-                    Paste text or click one of the quick presets on the left to analyze candidate compatibility dynamically.
-                  </p>
+                <div className="card card-dash h-full min-h-[300px] items-center justify-center border-base-300 bg-base-200/20 text-center">
+                  <div className="card-body items-center justify-center">
+                    <FileText className="mb-3 h-10 w-10 text-base-content/30" />
+                    <p className="font-display text-sm font-medium">
+                      Awaiting Job Description
+                    </p>
+                    <p className="mt-1 max-w-xs text-xs text-base-content/60">
+                      Paste text or click one of the quick presets on the left to
+                      analyze candidate compatibility dynamically.
+                    </p>
+                  </div>
                 </div>
               )}
             </AnimatePresence>

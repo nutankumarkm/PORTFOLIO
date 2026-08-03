@@ -18,7 +18,7 @@ const PATHS = [
 
 export function MorphSilhouette({
   className = "",
-  color = "#d4ff3a",
+  color = "var(--color-primary)",
 }: MorphSilhouetteProps) {
   return (
     <svg

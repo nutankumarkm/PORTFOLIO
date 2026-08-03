@@ -1,26 +1,31 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { experience, accentHex, type AccentColor } from "@/lib/portfolio-data";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { experience, type AccentColor } from "@/lib/portfolio-data";
+import { accent as accentClasses } from "@/lib/accent";
 import { SectionHeading } from "./SectionHeading";
 
 const accentByIndex: AccentColor[] = ["lime", "cyan"];
 
 export function Experience() {
+  const [active, setActive] = useState(0);
+  const job = experience[active];
+  const a = accentClasses(accentByIndex[active % accentByIndex.length]);
 
   return (
     <section
       id="experience"
-      className="relative lg:min-h-screen lg:flex lg:flex-col lg:justify-center py-20 lg:py-0 px-4 sm:px-6 lg:px-8 overflow-hidden"
+      className="relative overflow-hidden px-4 py-20 sm:px-6 lg:flex lg:min-h-screen lg:flex-col lg:justify-center lg:px-8 lg:py-0"
     >
       <div
-        className="absolute top-10 left-0 font-display text-[18vw] font-bold text-foreground/[0.02] leading-none pointer-events-none select-none"
+        className="pointer-events-none absolute left-0 top-10 select-none font-display text-[18vw] font-bold leading-none text-base-content/[0.02]"
         aria-hidden
       >
         WORK
       </div>
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative mx-auto w-full max-w-6xl">
         <SectionHeading
           index="04"
           eyebrow="Trajectory"
@@ -28,125 +33,109 @@ export function Experience() {
           accent="magenta"
         />
 
-        <div className="mt-16 relative">
-          {/* Vertical rail */}
-          <div className="absolute left-[15px] md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-ink-600 to-transparent" />
-
-          <div className="space-y-12 md:space-y-24">
-            {experience.map((job, idx) => {
-              const accent = accentByIndex[idx % accentByIndex.length];
-              const color = accentHex[accent];
-              const isLeft = idx % 2 === 0;
-
+        <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr] lg:gap-12">
+          {/* Company selector */}
+          <div
+            role="tablist"
+            aria-label="Roles"
+            className="tabs tabs-box h-fit gap-1 bg-base-200/50 p-2 backdrop-blur-md max-lg:tabs-sm lg:flex-col lg:items-stretch"
+          >
+            {experience.map((item, i) => {
+              const ia = accentClasses(accentByIndex[i % accentByIndex.length]);
               return (
-                <motion.div
-                  key={job.company}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.7 }}
-                  className={`relative grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12 pl-10 md:pl-0`}
+                <button
+                  key={item.company}
+                  role="tab"
+                  aria-selected={active === i}
+                  onClick={() => setActive(i)}
+                  data-cursor="hover"
+                  className={`tab h-auto flex-col items-start gap-1 py-3 text-left ${
+                    active === i ? "tab-active" : ""
+                  }`}
                 >
-                  {/* Rail node */}
-                  <div className="absolute left-0 md:left-1/2 top-2 -translate-x-1/2 z-10">
-                    <div className="relative">
-                      <motion.div
-                        className="h-4 w-4 rounded-full border-2"
-                        style={{ borderColor: color, backgroundColor: "var(--ink-900)" }}
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      />
-                      <motion.span
-                        className="absolute inset-0 rounded-full"
-                        style={{ border: `1px solid ${color}` }}
-                        animate={{ scale: [1, 2.5], opacity: [0.6, 0] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeOut",
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Spacer for alternating layout */}
-                  <div className={isLeft ? "md:block" : "md:order-2"} />
-
-                  {/* Card */}
-                  <motion.div
-                    initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-100px" }}
-                    transition={{ duration: 0.7, delay: 0.1 }}
-                    className={`group relative rounded-2xl border border-ink-600 bg-ink-800/50 p-6 md:p-8 hover:border-ink-500 transition-colors ${isLeft ? "md:col-start-1 md:text-right" : "md:col-start-2"
-                      }`}
+                  <span
+                    className={`font-mono-display text-[10px] uppercase tracking-[0.2em] ${
+                      active === i ? ia.text : "text-base-content/50"
+                    }`}
                   >
-                    {/* Accent strip */}
-                    <div
-                      className="absolute top-0 left-0 h-full w-[3px] rounded-l-2xl"
-                      style={{
-                        background: `linear-gradient(to bottom, ${color}, transparent)`,
-                      }}
-                    />
-
-                    <div className={`flex items-center gap-3 mb-3 ${isLeft ? "md:justify-end" : ""}`}>
-                      <span
-                        className="font-mono-display text-[10px] uppercase tracking-[0.25em] px-2 py-1 rounded-full border"
-                        style={{ borderColor: `${color}40`, color }}
-                      >
-                        {job.period}
-                      </span>
-                      <span className="font-mono-display text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                        {job.location}
-                      </span>
-                    </div>
-
-                    <h3 className="font-display text-2xl font-bold text-foreground">
-                      {job.role}
-                    </h3>
-                    <div className="font-mono-display text-sm mt-1" style={{ color }}>
-                      {job.company}
-                    </div>
-
-                    <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                      {job.summary}
-                    </p>
-
-                    <ul className={`mt-5 space-y-2.5 ${isLeft ? "md:text-left" : ""}`}>
-                      {job.bullets.map((b, i) => (
-                        <li
-                          key={i}
-                          className="flex gap-2.5 text-sm text-foreground/80 leading-relaxed"
-                        >
-                          <span
-                            className="mt-1.5 h-1 w-1 rounded-full shrink-0"
-                            style={{ backgroundColor: color }}
-                          />
-                          <span>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Stack chips */}
-                    <div className={`mt-6 flex flex-wrap gap-2 ${isLeft ? "md:justify-end" : ""}`}>
-                      {job.stack.map((s) => (
-                        <span
-                          key={s}
-                          className="rounded-full border border-ink-600 px-2.5 py-1 font-mono-display text-[10px] uppercase tracking-[0.15em] text-muted-foreground"
-                        >
-                          {s}
-                        </span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </motion.div>
+                    {item.period}
+                  </span>
+                  <span className="font-display text-sm font-semibold">
+                    {item.company}
+                  </span>
+                </button>
               );
             })}
           </div>
+
+          {/* Detail panel */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={job.company}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              role="tabpanel"
+              className="card relative overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md"
+            >
+              {/* Accent strip */}
+              <span
+                className={`absolute inset-y-0 left-0 w-[3px] ${a.bg} opacity-70`}
+                aria-hidden
+              />
+
+              <div className="card-body gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`badge badge-outline font-mono-display text-[10px] uppercase tracking-[0.25em] ${a.text}`}
+                  >
+                    {job.period}
+                  </span>
+                  <span className="font-mono-display text-[10px] uppercase tracking-[0.2em] text-base-content/60">
+                    {job.location}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className="card-title font-display text-2xl">{job.role}</h3>
+                  <div className={`mt-1 font-mono-display text-sm ${a.text}`}>
+                    {job.company}
+                  </div>
+                </div>
+
+                <p className="text-sm leading-relaxed text-base-content/70">
+                  {job.summary}
+                </p>
+
+                <ul className="space-y-2.5">
+                  {job.bullets.map((b, i) => (
+                    <motion.li
+                      key={i}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + i * 0.06, duration: 0.4 }}
+                      className="flex gap-2.5 text-sm leading-relaxed text-base-content/80"
+                    >
+                      <span className={`mt-1.5 h-1 w-1 shrink-0 rounded-full ${a.bg}`} />
+                      <span>{b}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+
+                <div className="card-actions mt-2 flex-wrap gap-2">
+                  {job.stack.map((s) => (
+                    <span
+                      key={s}
+                      className="badge badge-ghost badge-sm font-mono-display text-[10px] uppercase tracking-[0.15em]"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

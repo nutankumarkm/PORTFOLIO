@@ -111,6 +111,26 @@ const QA_DATABASE: QAItem[] = [
   }
 ];
 
+const getCommandAlias = (question: string): string => {
+  const q = question.toLowerCase();
+  if (q.includes("rag")) return "./execute --rag-experience";
+  if (q.includes("agent") || q.includes("autonomous")) return "./execute --autonomous-agents";
+  if (q.includes("raft")) return "./cat raft_consensus.md";
+  if (q.includes("languages")) return "./list --languages";
+  if (q.includes("contact")) return "./mail --nutankumar";
+  if (q.includes("resume") || q.includes("download")) return "./curl --download-resume";
+  if (q.includes("kam")) return "./cat work_history.json --kam";
+  if (q.includes("study") || q.includes("education")) return "./cat education_details.txt";
+  if (q.includes("iiitb")) return "./cat research_internship.pdf";
+  if (q.includes("mobile") || q.includes("flutter")) return "./execute --mobile-dev";
+  if (q.includes("frameworks") || q.includes("tools")) return "./list --ai-tools";
+  if (q.includes("databases")) return "./list --db-spec";
+  if (q.includes("remote")) return "./check --remote-openings";
+  if (q.includes("proctoring")) return "./cat ai_proctoring.cpp";
+  if (q.includes("machine learning") || q.includes("models")) return "./list --ml-models";
+  return `./run --query="${question.slice(0, 15)}..."`;
+};
+
 interface Message {
   id: string;
   sender: "user" | "bot";
@@ -124,7 +144,7 @@ export function ChatWidget() {
     {
       id: "welcome",
       sender: "bot",
-      text: "Hi! I am Nutankumar's virtual assistant. Click one of the questions below or type anything to learn about his projects, experience, and skills!",
+      text: "Hello! I am Nutan's AI Assistant. Ask me anything about his projects, experience, skills, or research, or select one of the topics below to get started.",
       isTypewriter: false
     }
   ]);
@@ -153,25 +173,54 @@ export function ChatWidget() {
     scrollToBottom();
   }, [messages, isTyping]);
 
-  const handleSend = (text: string) => {
+  const handleSend = async (text: string) => {
     if (!text.trim()) return;
 
     // Add user message
     const userMsgId = Date.now().toString();
-    setMessages((prev) => [...prev, { id: userMsgId, sender: "user", text }]);
+    const newUserMessage: Message = { id: userMsgId, sender: "user", text };
+    
+    setMessages((prev) => [...prev, newUserMessage]);
     setInputText("");
 
     // Trigger typing state
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      // Send conversation history to Next.js API
+      const currentHistory = [...messages, newUserMessage];
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: currentHistory
+        }),
+      });
+
+      setIsTyping(false);
+
+      if (!response.ok) {
+        throw new Error("Failed to contact chatbot API");
+      }
+
+      const data = await response.json();
+      const botResponse = data.reply || "No response received.";
+      
+      setMessages((prev) => [
+        ...prev,
+        { id: (Date.now() + 1).toString(), sender: "bot", text: botResponse, isTypewriter: true }
+      ]);
+    } catch (err) {
+      console.warn("Chat API offline. Falling back to local offline search database...", err);
       setIsTyping(false);
       const botResponse = getBotResponse(text);
       setMessages((prev) => [
         ...prev,
         { id: (Date.now() + 1).toString(), sender: "bot", text: botResponse, isTypewriter: true }
       ]);
-    }, 700);
+    }
   };
 
   const getBotResponse = (userInput: string): string => {
@@ -217,35 +266,26 @@ export function ChatWidget() {
 
   return (
     <>
-      {/* Floating Toggle Button */}
-      <div className="fixed bottom-6 right-6 z-[90] hidden md:block">
+      {/* Launcher */}
+      <div className="fixed bottom-4 right-4 z-[90] sm:bottom-6 sm:right-6">
         <Magnetic strength={0.25} dataCursor="hover">
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="relative h-14 w-14 rounded-full bg-lime text-background shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+            className="btn btn-primary btn-circle btn-lg indicator shadow-xl"
             aria-label="Toggle chat assistant"
+            aria-expanded={isOpen}
           >
+            {!isOpen && (
+              <span className="indicator-item">
+                <span className="status status-accent animate-ping" />
+              </span>
+            )}
             {isOpen ? <X className="h-6 w-6" /> : <MessageSquare className="h-6 w-6" />}
-            <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-acc opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-cyan-acc"></span>
-            </span>
           </button>
         </Magnetic>
       </div>
 
-      {/* Mobile-friendly Button */}
-      <div className="fixed bottom-4 right-4 z-[90] md:hidden">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="relative h-12 w-12 rounded-full bg-lime text-background shadow-lg flex items-center justify-center"
-          aria-label="Toggle chat assistant"
-        >
-          {isOpen ? <X className="h-5 w-5" /> : <MessageSquare className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {/* Chat Window Container */}
+      {/* Chat panel */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -253,97 +293,98 @@ export function ChatWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-24 right-4 sm:right-6 z-[95] w-[calc(100vw-32px)] sm:w-[400px] h-[550px] rounded-2xl border border-hairline bg-surface-2/95 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden"
+            role="dialog"
+            aria-label="Portfolio assistant"
+            className="card fixed bottom-24 right-4 z-[95] flex h-[580px] max-h-[calc(100svh-8rem)] w-[calc(100vw-32px)] flex-col overflow-hidden border border-base-300 bg-base-100/90 font-sans shadow-2xl backdrop-blur-xl sm:right-6 sm:w-[400px]"
           >
             {/* Header */}
-            <div className="px-5 py-4 border-b border-hairline flex items-center justify-between bg-surface/50">
-              <div className="flex items-center gap-3">
-                <div className="relative h-8 w-8 rounded-full border border-lime/40 bg-lime/10 flex items-center justify-center font-display text-[10px] font-bold text-lime">
-                  NK
-                </div>
-                <div>
-                  <h3 className="font-display text-sm font-bold text-foreground leading-none">Assistant</h3>
-                  <div className="flex items-center gap-1.5 mt-1">
-                    <span className="h-1.5 w-1.5 rounded-full bg-lime animate-pulse" />
-                    <span className="font-mono-display text-[8px] uppercase tracking-wider text-lime">Offline Bot</span>
-                  </div>
+            <div className="navbar min-h-0 select-none border-b border-base-300 bg-base-200 px-4 py-3">
+              <div className="navbar-start gap-2.5">
+                <span className="status status-success animate-pulse" aria-hidden />
+                <div className="flex flex-col">
+                  <span className="text-[13px] font-bold leading-tight tracking-tight">
+                    Nutan&apos;s Copilot
+                  </span>
+                  <span className="text-[10px] leading-tight text-base-content/60">
+                    Online // Ask anything
+                  </span>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-foreground/5 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Close chat"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="navbar-end">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="btn btn-ghost btn-xs btn-circle"
+                  aria-label="Close assistant"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Messages Scroll Area */}
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 select-text scrollbar-thin">
+            {/* Messages */}
+            <div className="flex-1 select-text overflow-y-auto px-4 py-3">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                  className={`chat ${msg.sender === "user" ? "chat-end" : "chat-start"}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                      msg.sender === "user"
-                        ? "bg-lime text-background font-medium rounded-tr-none"
-                        : "border border-hairline bg-surface rounded-tl-none text-foreground"
+                    className={`chat-bubble whitespace-pre-line text-[13px] leading-relaxed ${
+                      msg.sender === "user" ? "chat-bubble-primary" : ""
                     }`}
                   >
                     {msg.sender === "bot" && msg.isTypewriter ? (
-                      <Typewriter
-                        text={msg.text}
-                        onComplete={() => {
-                          // Clean typewriter state once animation is complete
-                          setMessages((prev) =>
-                            prev.map((m) => (m.id === msg.id ? { ...m, isTypewriter: false } : m))
-                          );
-                        }}
-                      />
+                      <>
+                        <Typewriter
+                          text={msg.text}
+                          onComplete={() => {
+                            setMessages((prev) =>
+                              prev.map((m) =>
+                                m.id === msg.id ? { ...m, isTypewriter: false } : m
+                              )
+                            );
+                          }}
+                        />
+                        <span className="ml-0.5 inline-block h-3.5 w-1 animate-pulse bg-primary align-middle" />
+                      </>
                     ) : (
-                      <span className="whitespace-pre-line">{msg.text}</span>
+                      <span>{msg.text}</span>
                     )}
                   </div>
                 </div>
               ))}
 
-              {/* Typing state */}
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="max-w-[85%] rounded-2xl rounded-tl-none border border-hairline bg-surface px-4 py-3 text-sm flex items-center gap-1.5">
-                    <span className="font-mono-display text-[10px] text-muted-foreground mr-1">Typing</span>
-                    <span className="h-1.5 w-1.5 rounded-full bg-lime animate-bounce" style={{ animationDelay: "0ms" }} />
-                    <span className="h-1.5 w-1.5 rounded-full bg-lime animate-bounce" style={{ animationDelay: "150ms" }} />
-                    <span className="h-1.5 w-1.5 rounded-full bg-lime animate-bounce" style={{ animationDelay: "300ms" }} />
+                <div className="chat chat-start">
+                  <div className="chat-bubble">
+                    <span className="loading loading-dots loading-sm" />
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Suggestions Box */}
-            <div className="px-5 py-3 border-t border-hairline bg-surface/30">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-mono-display text-[8px] uppercase tracking-widest text-muted-foreground">
-                  Suggested Questions
+            {/* Suggested topics */}
+            <div className="select-none border-t border-base-300 bg-base-200/50 px-4 py-3">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-base-content/60">
+                  Suggested Topics
                 </span>
                 <button
                   onClick={shuffleSuggestions}
-                  className="flex items-center gap-1 text-muted-foreground hover:text-lime transition-colors"
-                  title="Shuffle questions"
+                  className="btn btn-ghost btn-xs gap-1 text-[10px]"
+                  title="Shuffle topics"
                 >
                   <RotateCw className="h-3 w-3" />
-                  <span className="font-mono-display text-[8px] uppercase tracking-wider">Shuffle</span>
+                  Shuffle
                 </button>
               </div>
-              <div className="flex flex-wrap gap-1.5 max-h-[100px] overflow-y-auto pr-1">
+              <div className="flex max-h-[110px] flex-wrap gap-1.5 overflow-y-auto pr-1">
                 {suggestions.map((item) => (
                   <button
                     key={item.question}
                     onClick={() => handleSend(item.question)}
-                    className="text-left rounded-lg border border-hairline bg-surface-2 hover:bg-lime/5 hover:border-lime/40 px-2.5 py-1.5 font-sans text-[11px] text-muted-foreground hover:text-lime leading-tight transition-all duration-200"
+                    className="btn btn-ghost btn-xs h-auto whitespace-normal border border-base-300 py-1.5 text-left text-[11px] font-normal leading-tight"
                   >
                     {item.question}
                   </button>
@@ -351,29 +392,30 @@ export function ChatWidget() {
               </div>
             </div>
 
-            {/* Input Bar */}
+            {/* Composer */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSend(inputText);
               }}
-              className="p-4 border-t border-hairline bg-surface/50 flex items-center gap-2"
+              className="join select-none border-t border-base-300 bg-base-200 p-3"
             >
               <input
                 ref={inputRef}
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Ask me about RAG, Raft, or email..."
-                className="flex-1 rounded-full border border-hairline bg-surface px-4 py-2 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-lime focus:ring-1 focus:ring-lime"
+                placeholder="Ask a question…"
+                aria-label="Ask a question"
+                className="input input-sm join-item flex-1 text-[13px] focus:input-primary"
               />
               <button
                 type="submit"
                 disabled={!inputText.trim()}
-                className="h-9 w-9 rounded-full bg-lime text-background flex items-center justify-center hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-transform"
+                className="btn btn-primary btn-sm join-item"
                 aria-label="Send message"
               >
-                <Send className="h-4 w-4" />
+                <Send className="h-3.5 w-3.5" />
               </button>
             </form>
           </motion.div>
@@ -382,3 +424,5 @@ export function ChatWidget() {
     </>
   );
 }
+
+

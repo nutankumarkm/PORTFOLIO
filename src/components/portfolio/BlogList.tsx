@@ -24,7 +24,7 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
     : posts;
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-background">
+    <div className="relative flex min-h-screen flex-col bg-base-100">
       <Cursor />
       <ScrollProgress />
       <Navigation />
@@ -40,7 +40,7 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
           <Magnetic strength={0.2} dataCursor="hover">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-xs font-mono-display uppercase tracking-widest text-muted-foreground hover:text-lime transition-colors"
+              className="btn btn-ghost btn-sm gap-2 font-mono-display text-xs uppercase tracking-widest"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Home
@@ -60,7 +60,7 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-6 text-base sm:text-lg text-muted-foreground max-w-2xl leading-relaxed"
+          className="mt-6 max-w-2xl text-base leading-relaxed text-base-content/70 sm:text-lg"
         >
           In-depth technical write-ups, engineering notes, and logbook entries detailing RAG pipelines, distributed algorithms, and model fine-tuning.
         </motion.p>
@@ -71,14 +71,13 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="mt-8 flex flex-wrap gap-2 pb-6 border-b border-hairline"
+            className="mt-8 flex flex-wrap gap-2 border-b border-base-300 pb-6"
           >
             <button
               onClick={() => setSelectedTag(null)}
-              className={`rounded-full px-4 py-1.5 font-mono-display text-[10px] uppercase tracking-widest border transition-all duration-300 ${
-                selectedTag === null
-                  ? "bg-lime border-lime text-background font-bold"
-                  : "border-hairline bg-surface hover:border-lime/40 text-muted-foreground hover:text-foreground"
+              aria-pressed={selectedTag === null}
+              className={`btn btn-sm rounded-full font-mono-display text-[10px] uppercase tracking-widest ${
+                selectedTag === null ? "btn-primary" : "btn-outline"
               }`}
             >
               All Posts
@@ -87,10 +86,9 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
-                className={`rounded-full px-4 py-1.5 font-mono-display text-[10px] uppercase tracking-widest border transition-all duration-300 ${
-                  selectedTag === tag
-                    ? "bg-lime border-lime text-background font-bold"
-                    : "border-hairline bg-surface hover:border-lime/40 text-muted-foreground hover:text-foreground"
+                aria-pressed={selectedTag === tag}
+                className={`btn btn-sm rounded-full font-mono-display text-[10px] uppercase tracking-widest ${
+                  selectedTag === tag ? "btn-primary" : "btn-outline"
                 }`}
               >
                 {tag}
@@ -111,15 +109,15 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
               >
                 <Link
                   href={`/blog/${post.slug}`}
-                  className="group relative block rounded-2xl border border-hairline bg-surface-2/40 hover:bg-surface-2/70 p-6 sm:p-8 hover:border-border transition-colors overflow-hidden"
+                  className="card group relative overflow-hidden border border-base-300 bg-base-200/40 transition-colors hover:border-base-content/20 hover:bg-base-200/70"
                 >
-                  {/* Subtle hover accent line */}
-                  <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-lime scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center" />
+                  {/* Hover accent rail */}
+                  <div className="absolute inset-y-0 left-0 w-[2px] origin-center scale-y-0 bg-primary transition-transform duration-300 group-hover:scale-y-100" />
 
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                  <div className="card-body flex-col justify-between gap-4 sm:flex-row sm:items-start">
                     <div className="flex-1 space-y-3">
-                      {/* Meta info row */}
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                      {/* Meta */}
+                      <div className="flex items-center gap-4 text-xs text-base-content/60">
                         <span className="flex items-center gap-1.5 font-mono-display">
                           <Calendar className="h-3.5 w-3.5" />
                           {post.date}
@@ -130,22 +128,19 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
                         </span>
                       </div>
 
-                      {/* Title */}
-                      <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground group-hover:text-lime transition-colors">
+                      <h2 className="card-title font-display text-xl font-bold transition-colors group-hover:text-primary sm:text-2xl">
                         {post.title}
                       </h2>
 
-                      {/* Description */}
-                      <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
+                      <p className="max-w-3xl text-sm leading-relaxed text-base-content/70">
                         {post.description}
                       </p>
 
-                      {/* Tags */}
-                      <div className="flex flex-wrap gap-1.5 pt-2">
+                      <div className="card-actions flex-wrap gap-1.5 pt-2">
                         {post.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="inline-flex items-center gap-1 rounded-full border border-hairline bg-surface px-2.5 py-0.5 font-mono-display text-[9px] uppercase tracking-wider text-muted-foreground"
+                            className="badge badge-outline badge-sm gap-1 font-mono-display text-[9px] uppercase tracking-wider"
                           >
                             <Tag className="h-2 w-2" />
                             {tag}
@@ -155,7 +150,7 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
                     </div>
 
                     {/* Arrow cue */}
-                    <div className="hidden sm:flex h-10 w-10 rounded-full border border-hairline bg-surface items-center justify-center text-muted-foreground group-hover:border-lime group-hover:text-lime group-hover:translate-x-1 transition-all duration-300 mt-2">
+                    <div className="btn btn-circle btn-outline btn-sm mt-2 hidden transition-all duration-300 group-hover:translate-x-1 group-hover:btn-primary sm:flex">
                       →
                     </div>
                   </div>
@@ -163,8 +158,8 @@ export function BlogList({ posts }: { posts: BlogPostMetadata[] }) {
               </motion.article>
             ))
           ) : (
-            <div className="text-center py-16 border border-dashed border-hairline rounded-2xl bg-surface/30">
-              <p className="text-muted-foreground font-mono-display text-xs uppercase tracking-widest">
+            <div className="card card-dash border-base-300 bg-base-200/30 py-16 text-center">
+              <p className="font-mono-display text-xs uppercase tracking-widest text-base-content/60">
                 No posts found matching that tag.
               </p>
             </div>

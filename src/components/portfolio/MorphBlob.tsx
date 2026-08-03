@@ -21,7 +21,7 @@ const PATHS = [
 
 export function MorphBlob({
   className = "",
-  color = "#d4ff3a",
+  color = "var(--color-primary)",
   duration = 14,
   opacity = 0.18,
 }: MorphBlobProps) {
@@ -51,7 +51,7 @@ export function MorphBlob({
 // Multi-stroke version — looks like layered motion graphics
 export function MorphBlobLines({
   className = "",
-  color = "#d4ff3a",
+  color = "var(--color-primary)",
   duration = 18,
 }: MorphBlobProps) {
   return (

@@ -1,21 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { accent as accentClasses } from "@/lib/accent";
+import type { AccentColor } from "@/lib/portfolio-data";
 
 interface SectionHeadingProps {
   index: string;
   eyebrow: string;
   title: string;
-  accent?: "lime" | "cyan" | "magenta" | "amber" | "violet";
+  accent?: AccentColor;
 }
-
-const accentColor: Record<string, string> = {
-  lime: "var(--lime)",
-  cyan: "var(--cyan)",
-  magenta: "var(--magenta)",
-  amber: "var(--amber)",
-  violet: "var(--violet)",
-};
 
 export function SectionHeading({
   index,
@@ -23,32 +17,28 @@ export function SectionHeading({
   title,
   accent = "lime",
 }: SectionHeadingProps) {
-  const color = accentColor[accent];
+  const a = accentClasses(accent);
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: false, margin: "-80px" }}
       transition={{ duration: 0.7 }}
       className="flex flex-col gap-3"
     >
       <div className="flex items-center gap-4">
-        <span
-          className="font-mono-display text-[11px] tracking-[0.3em]"
-          style={{ color }}
-        >
+        <span className={`font-mono-display text-[11px] tracking-[0.3em] ${a.text}`}>
           {index}
         </span>
-        <span className="h-px flex-1 bg-ink-600 max-w-[80px]" />
+        <span className="h-px max-w-[80px] flex-1 bg-base-300" />
         <span
-          className="font-mono-display text-[11px] uppercase tracking-[0.3em]"
-          style={{ color }}
+          className={`font-mono-display text-[11px] uppercase tracking-[0.3em] ${a.text}`}
         >
           {eyebrow}
         </span>
       </div>
-      <h2 className="font-display text-5xl sm:text-6xl md:text-7xl font-bold tracking-tight">
+      <h2 className="font-display text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl">
         {title}
       </h2>
     </motion.div>

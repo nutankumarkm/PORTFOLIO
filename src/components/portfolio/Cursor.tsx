@@ -41,13 +41,20 @@ export function Cursor() {
   useEffect(() => {
     if (isTouch) return;
 
-    const move = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+    let rafId = 0;
+    let pendingTarget: HTMLElement | null = null;
+    // Remember the last resolved hit so identical frames skip the setState pair
+    // entirely rather than relying on React's bail-out.
+    let lastTarget: HTMLElement | null = null;
 
-      const target = e.target as HTMLElement;
-      const interactive = target.closest(
+    // Selector matching is a DOM walk up the tree; run it at most once a frame.
+    const resolveTarget = () => {
+      rafId = 0;
+      const target = pendingTarget;
+      if (target === lastTarget) return;
+      lastTarget = target;
+
+      const interactive = target?.closest(
         "a, button, [data-cursor], [role='button'], input, textarea, select, [data-cursor-label]"
       ) as HTMLElement | null;
 
@@ -55,27 +62,44 @@ export function Cursor() {
         const customVariant = interactive.dataset.cursor as
           | CursorVariant
           | undefined;
-        const customLabel = interactive.dataset.cursorLabel || "";
         setVariant(customVariant || "hover");
-        setLabel(customLabel);
+        setLabel(interactive.dataset.cursorLabel || "");
       } else {
         setVariant("default");
         setLabel("");
       }
     };
 
-    const leave = () => setIsVisible(false);
-    const enter = () => setIsVisible(true);
+    let visible = false;
+    const setVisible = (next: boolean) => {
+      if (visible === next) return;
+      visible = next;
+      setIsVisible(next);
+    };
 
-    window.addEventListener("mousemove", move);
+    const move = (e: MouseEvent) => {
+      // Motion values write straight to the transform without a React render.
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      setVisible(true);
+
+      pendingTarget = e.target as HTMLElement;
+      if (!rafId) rafId = requestAnimationFrame(resolveTarget);
+    };
+
+    const leave = () => setVisible(false);
+    const enter = () => setVisible(true);
+
+    window.addEventListener("mousemove", move, { passive: true });
     document.addEventListener("mouseleave", leave);
     document.addEventListener("mouseenter", enter);
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
       window.removeEventListener("mousemove", move);
       document.removeEventListener("mouseleave", leave);
       document.removeEventListener("mouseenter", enter);
     };
-  }, [cursorX, cursorY, isVisible, isTouch]);
+  }, [cursorX, cursorY, isTouch]);
 
   if (isTouch) return null;
 
@@ -91,18 +115,20 @@ export function Cursor() {
 
   return (
     <>
-      {/* Dot — instant follow */}
+      {/* Dot — instant follow.
+          Colors live in CSS classes rather than `animate` so they resolve from
+          the active daisyUI theme; Framer only drives geometry and opacity. */}
       <motion.div
         className="pointer-events-none fixed top-0 left-0 z-[9999] hidden md:block"
         style={{ x: cursorX, y: cursorY }}
       >
         <motion.div
-          className="-translate-x-1/2 -translate-y-1/2 rounded-full"
+          className={`-translate-x-1/2 -translate-y-1/2 rounded-full transition-colors duration-150 ${
+            variant === "default" ? "bg-primary" : "bg-transparent"
+          }`}
           animate={{
             width: variant === "text" ? 2 : 6,
             height: variant === "text" ? 24 : 6,
-            backgroundColor:
-              variant === "default" ? "#d4ff3a" : "rgba(212,255,58,0)",
             opacity: isVisible ? 1 : 0,
           }}
           transition={{ duration: 0.15 }}
@@ -115,22 +141,16 @@ export function Cursor() {
         style={{ x: ringX, y: ringY }}
       >
         <motion.div
-          className="-translate-x-1/2 -translate-y-1/2 rounded-full border flex items-center justify-center font-mono-display uppercase tracking-widest"
+          className={`-translate-x-1/2 -translate-y-1/2 rounded-full border flex items-center justify-center font-mono-display text-[9px] uppercase tracking-widest text-primary transition-colors duration-150 ${
+            variant === "default"
+              ? "border-primary/40 bg-primary/0"
+              : variant === "view"
+                ? "border-primary/90 bg-primary/10"
+                : "border-primary/90 bg-primary/5"
+          }`}
           animate={{
             width: ringSize,
             height: ringSize,
-            borderColor:
-              variant === "default"
-                ? "rgba(212,255,58,0.4)"
-                : "rgba(212,255,58,0.9)",
-            backgroundColor:
-              variant === "default"
-                ? "rgba(212,255,58,0)"
-                : variant === "view"
-                  ? "rgba(212,255,58,0.12)"
-                  : "rgba(212,255,58,0.06)",
-            fontSize: 9,
-            color: "#d4ff3a",
           }}
           transition={{
             type: "spring",

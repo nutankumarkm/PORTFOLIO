@@ -236,10 +236,15 @@ export const navItems = [
 
 export type AccentColor = "lime" | "cyan" | "magenta" | "amber" | "violet";
 
+/**
+ * Accent names are historical (the old neon brand palette). They now resolve
+ * to daisyUI theme variables so anything painted with them follows the active
+ * theme rather than reintroducing off-palette neon.
+ */
 export const accentHex: Record<AccentColor, string> = {
-  lime: "#d4ff3a",
-  cyan: "#3afff0",
-  magenta: "#ff3a8c",
-  amber: "#ffb13a",
-  violet: "#b988ff",
+  lime: "var(--color-primary)",
+  cyan: "var(--color-accent)",
+  magenta: "var(--color-secondary)",
+  amber: "var(--color-warning)",
+  violet: "var(--color-info)",
 };

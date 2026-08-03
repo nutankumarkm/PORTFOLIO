@@ -27,75 +27,43 @@ export function IntroLoader() {
     <AnimatePresence>
       {!done && (
         <motion.div
-          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-ink-900"
-          exit={{ y: "-100%" }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+          className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-base-100"
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <motion.div
-            className="relative flex items-center justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <svg
-              width="220"
-              height="220"
-              viewBox="0 0 220 220"
-              fill="none"
-              className="absolute"
+          <div className="relative flex flex-col items-center justify-center">
+            <div
+              className="radial-progress text-primary transition-all duration-75"
+              style={
+                {
+                  "--value": count,
+                  "--size": "10rem",
+                  "--thickness": "2.5px",
+                } as React.CSSProperties
+              }
+              role="progressbar"
+              aria-valuenow={count}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Loading portfolio"
             >
-              <motion.path
-                d="M110 20 C 160 30, 195 70, 195 110 C 195 160, 150 200, 110 200 C 70 200, 25 165, 25 110 C 25 65, 65 30, 110 20 Z"
-                stroke="rgba(212,255,58,0.25)"
-                strokeWidth="1"
-                fill="none"
-                animate={{
-                  d: [
-                    "M110 20 C 160 30, 195 70, 195 110 C 195 160, 150 200, 110 200 C 70 200, 25 165, 25 110 C 25 65, 65 30, 110 20 Z",
-                    "M110 25 C 170 40, 200 90, 185 130 C 175 175, 140 195, 105 200 C 60 205, 30 165, 30 115 C 30 70, 65 25, 110 25 Z",
-                    "M110 20 C 160 30, 195 70, 195 110 C 195 160, 150 200, 110 200 C 70 200, 25 165, 25 110 C 25 65, 65 30, 110 20 Z",
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              />
-              <motion.circle
-                cx="110"
-                cy="110"
-                r="50"
-                stroke="rgba(212,255,58,0.9)"
-                strokeWidth="1.5"
-                fill="none"
-                animate={{ r: [50, 56, 50], opacity: [0.9, 0.5, 0.9] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              />
-            </svg>
-
-            <motion.div
-              className="font-mono-display text-[14px] tracking-[0.4em] text-lime"
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              LOADING
-            </motion.div>
-          </motion.div>
-
-          <div className="mt-12 w-[min(80vw,360px)]">
-            <div className="mb-2 flex items-end justify-between font-mono-display text-[11px] tracking-widest text-muted-foreground">
-              <span>NUTANKUMAR.KM</span>
-              <span className="text-lime">{count.toString().padStart(3, "0")}%</span>
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="font-display text-3xl font-extrabold tracking-wider text-primary"
+              >
+                NK
+              </motion.span>
             </div>
-            <div className="h-px w-full bg-ink-600 overflow-hidden">
-              <motion.div
-                className="h-full bg-lime origin-left"
-                style={{ width: `${count}%` }}
-              />
+
+            <div className="mt-8 flex select-none flex-col items-center gap-1.5 text-center">
+              <span className="font-mono-display text-[10px] font-bold uppercase tracking-[0.35em] text-primary">
+                Initializing Portfolio
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-widest text-base-content/60">
+                {count.toString().padStart(3, "0")}%
+              </span>
             </div>
-            <motion.div
-              className="mt-3 text-center font-mono-display text-[10px] uppercase tracking-[0.35em] text-muted-foreground"
-              animate={{ opacity: [0.3, 0.8, 0.3] }}
-              transition={{ duration: 1.6, repeat: Infinity }}
-            >
-              Compiling portfolio —
-            </motion.div>
           </div>
         </motion.div>
       )}

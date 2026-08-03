@@ -9,16 +9,11 @@ import {
   useScroll,
 } from "framer-motion";
 import { profile, heroMetrics } from "@/lib/portfolio-data";
+import { scrollToStageSection } from "@/lib/scroll-stage";
+import { accent } from "@/lib/accent";
 import { MorphBlob } from "./MorphBlob";
 import { Magnetic } from "./Magnetic";
 import { ScrambleText } from "./ScrambleText";
-
-const accentMap: Record<string, string> = {
-  lime: "var(--lime)",
-  cyan: "var(--cyan)",
-  magenta: "var(--magenta)",
-  amber: "var(--amber)",
-};
 
 export function Hero() {
   const containerRef = useRef<HTMLElement>(null);
@@ -58,72 +53,70 @@ export function Hero() {
     <section
       ref={containerRef}
       id="hero"
-      className="relative min-h-[100svh] w-full overflow-hidden grain"
+      className="hero grain relative min-h-[100svh] w-full overflow-hidden"
     >
-      {/* Single soft gradient halo — replaces the busy triple-mesh */}
+      {/* Soft gradient halo, parallaxed against the pointer */}
       <motion.div
-        className="absolute inset-0 pointer-events-none"
+        className="pointer-events-none absolute inset-0"
         style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
       >
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full blur-[140px] opacity-30"
+          className="absolute left-1/2 top-1/2 h-[60vw] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-[140px]"
           style={{
             background:
-              "radial-gradient(circle, color-mix(in oklch, var(--lime) 50%, transparent) 0%, transparent 65%)",
+              "radial-gradient(circle, color-mix(in oklch, var(--color-primary) 50%, transparent) 0%, transparent 65%)",
           }}
         />
       </motion.div>
 
-      {/* Single morphing blob — focal accent on the right */}
       <MorphBlob
-        className="absolute top-1/2 right-[-8%] -translate-y-1/2 w-[min(45vw,520px)] aspect-square opacity-[0.22] pointer-events-none"
-        color="var(--lime)"
+        className="pointer-events-none absolute right-[-8%] top-1/2 aspect-square w-[min(45vw,520px)] -translate-y-1/2 opacity-[0.22]"
+        color="var(--color-primary)"
         duration={18}
       />
 
-      {/* Subtle grid — much fainter than before */}
+      {/* Faint grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "linear-gradient(var(--foreground) 1px, transparent 1px), linear-gradient(90deg, var(--foreground) 1px, transparent 1px)",
+            "linear-gradient(var(--color-base-content) 1px, transparent 1px), linear-gradient(90deg, var(--color-base-content) 1px, transparent 1px)",
           backgroundSize: "100px 100px",
-          maskImage:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
+          maskImage: "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
           WebkitMaskImage:
             "radial-gradient(ellipse 70% 60% at 50% 50%, black, transparent)",
         }}
       />
 
-      {/* Left-side vertical meta strip (replaces the old overlapping top bar) */}
+      {/* Left meta strip */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.0, duration: 0.6 }}
-        className="absolute left-4 sm:left-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-4 z-20"
+        className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col items-center gap-4 sm:left-6 lg:flex"
       >
-        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground [writing-mode:vertical-rl] rotate-180">
+        <span className="rotate-180 font-mono-display text-[10px] uppercase tracking-[0.3em] text-base-content/60 [writing-mode:vertical-rl]">
           {profile.location}
         </span>
-        <span className="h-12 w-px bg-hairline" />
-        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-lime [writing-mode:vertical-rl] rotate-180">
+        <span className="h-12 w-px bg-base-300" />
+        <span className="rotate-180 font-mono-display text-[10px] uppercase tracking-[0.3em] text-primary [writing-mode:vertical-rl]">
           {profile.availability}
         </span>
       </motion.div>
 
-      {/* Right-side vertical scroll indicator (replaces bottom cue) */}
+      {/* Right scroll indicator */}
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 2.2, duration: 0.6 }}
-        className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 hidden lg:flex flex-col items-center gap-3 z-20"
+        className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 flex-col items-center gap-3 sm:right-6 lg:flex"
       >
-        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-muted-foreground [writing-mode:vertical-rl]">
+        <span className="font-mono-display text-[10px] uppercase tracking-[0.3em] text-base-content/60 [writing-mode:vertical-rl]">
           Scroll
         </span>
-        <div className="h-16 w-px bg-hairline relative overflow-hidden">
+        <div className="relative h-16 w-px overflow-hidden bg-base-300">
           <motion.span
-            className="absolute top-0 left-0 w-full bg-lime"
+            className="absolute left-0 top-0 w-full bg-primary"
             animate={{ y: ["-100%", "100%"] }}
             transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
             style={{ height: "50%" }}
@@ -131,30 +124,28 @@ export function Hero() {
         </div>
       </motion.div>
 
-      {/* Center stage — kinetic name typography */}
+      {/* Center stage */}
       <motion.div
         style={{ y: titleY, opacity: titleOpacity }}
-        className="relative z-10 flex flex-col items-center justify-center min-h-[100svh] px-4 pt-24 pb-32"
+        className="hero-content relative z-10 min-h-[100svh] flex-col px-4 pb-32 pt-24 text-center"
       >
         {/* Eyebrow */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.8, duration: 0.6 }}
-          className="mb-6 flex items-center gap-3 font-mono-display text-[11px] uppercase tracking-[0.4em] text-muted-foreground"
+          className="mb-6 flex items-center gap-3 font-mono-display text-[11px] uppercase tracking-[0.4em] text-base-content/60"
         >
-          <span className="h-px w-8 bg-lime/60" />
+          <span className="h-px w-8 bg-primary/60" />
           <ScrambleText text="Portfolio — 2026" trigger="mount" speed={1.5} />
-          <span className="h-px w-8 bg-lime/60" />
+          <span className="h-px w-8 bg-primary/60" />
         </motion.div>
 
-        {/* Name — kinetic reveal */}
-        <h1 className="group relative font-display font-bold text-center leading-none tracking-tight text-[clamp(2.2rem,8vw,3.6rem)] md:text-[clamp(3.5rem,5.5vw,5.2rem)] flex flex-col md:flex-row items-center justify-center gap-y-1 md:gap-x-4 select-none">
-          {/* Subtle side glowing line-caps that appear on hover */}
-          <div className="absolute -left-6 top-1/2 -translate-y-1/2 h-8 w-px bg-gradient-to-t from-transparent via-lime/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:block" />
-          <div className="absolute -right-6 top-1/2 -translate-y-1/2 h-8 w-px bg-gradient-to-t from-transparent via-lime/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 hidden md:block" />
+        {/* Kinetic name */}
+        <h1 className="group relative flex select-none flex-col items-center justify-center gap-y-1 text-center font-display text-[clamp(2.2rem,8vw,3.6rem)] font-bold leading-none tracking-tight md:flex-row md:gap-x-4 md:text-[clamp(3.5rem,5.5vw,5.2rem)]">
+          <div className="absolute -left-6 top-1/2 hidden h-8 w-px -translate-y-1/2 bg-gradient-to-t from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 md:block" />
+          <div className="absolute -right-6 top-1/2 hidden h-8 w-px -translate-y-1/2 bg-gradient-to-t from-transparent via-primary/50 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 md:block" />
 
-          {/* First Name (Solid) */}
           <span className="block">
             {firstName.map((ch, i) => (
               <motion.span
@@ -169,8 +160,8 @@ export function Hero() {
                 whileHover={{
                   y: -8,
                   scale: 1.12,
-                  color: "var(--lime)",
-                  transition: { type: "spring", stiffness: 400, damping: 12 }
+                  color: "var(--color-primary)",
+                  transition: { type: "spring", stiffness: 400, damping: 12 },
                 }}
                 className="inline-block origin-bottom cursor-default"
               >
@@ -179,8 +170,7 @@ export function Hero() {
             ))}
           </span>
 
-          {/* Last Name (Gradient) */}
-          <span className="block gradient-text">
+          <span className="gradient-text block">
             {lastName.map((ch, i) => (
               <motion.span
                 key={`l-${i}`}
@@ -194,8 +184,8 @@ export function Hero() {
                 whileHover={{
                   y: -8,
                   scale: 1.12,
-                  filter: "drop-shadow(0 0 10px var(--lime))",
-                  transition: { type: "spring", stiffness: 400, damping: 12 }
+                  filter: "drop-shadow(0 0 10px var(--color-primary))",
+                  transition: { type: "spring", stiffness: 400, damping: 12 },
                 }}
                 className="inline-block origin-bottom cursor-default"
               >
@@ -205,22 +195,22 @@ export function Hero() {
           </span>
         </h1>
 
-        {/* Role + location row — replaces cluttered status bar */}
+        {/* Role row */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.6, duration: 0.6 }}
-          className="mt-6 flex items-center gap-3 font-mono-display text-xs sm:text-sm tracking-[0.25em] uppercase"
+          className="mt-6 flex items-center gap-3 font-mono-display text-xs uppercase tracking-[0.25em] sm:text-sm"
         >
-          <span className="text-muted-foreground">{profile.role}</span>
+          <span className="text-base-content/60">{profile.role}</span>
           <motion.span
             animate={{ rotate: [0, 360] }}
             transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-            className="inline-block text-lime"
+            className="inline-block text-primary"
           >
             ✦
           </motion.span>
-          <span className="text-lime">{profile.roleAlt}</span>
+          <span className="text-primary">{profile.roleAlt}</span>
         </motion.div>
 
         {/* Tagline */}
@@ -228,7 +218,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 2.8, duration: 0.7 }}
-          className="mt-8 max-w-[min(92vw,580px)] text-center text-base sm:text-lg text-muted-foreground leading-relaxed min-h-[3.5rem]"
+          className="mt-8 min-h-[3.5rem] max-w-[min(92vw,580px)] text-base leading-relaxed text-base-content/70 sm:text-lg"
         >
           {profile.tagline}
         </motion.p>
@@ -238,61 +228,53 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 3.1, duration: 0.6 }}
-          className="mt-6 flex flex-col sm:flex-row gap-3 items-center"
+          className="mt-6 flex flex-col items-center gap-3 sm:flex-row"
         >
           <Magnetic
             as="button"
             strength={0.3}
             dataCursor="hover"
             dataCursorLabel="View"
-            onClick={() =>
-              document
-                .getElementById("projects")
-                ?.scrollIntoView({ behavior: "smooth" })
-            }
-            className="group relative inline-flex items-center gap-3 rounded-full bg-lime px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-background overflow-hidden"
+            onClick={() => scrollToStageSection("projects")}
+            className="btn btn-primary group gap-3 rounded-full px-6 font-mono-display text-xs uppercase tracking-[0.2em]"
           >
-            <span className="relative z-10">View Work</span>
-            <span className="relative z-10 transition-transform group-hover:translate-x-1">
-              →
-            </span>
-            <span className="absolute inset-0 bg-cyan-acc -translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            View Work
+            <span className="transition-transform group-hover:translate-x-1">→</span>
           </Magnetic>
           <Magnetic
             as="a"
             href={`mailto:${profile.email}`}
             strength={0.3}
             dataCursor="hover"
-            className="inline-flex items-center gap-2 rounded-full border border-hairline px-6 py-3 font-mono-display text-xs uppercase tracking-[0.2em] text-foreground hover:border-lime/60 hover:text-lime transition-colors"
+            className="btn btn-outline gap-2 rounded-full px-6 font-mono-display text-xs uppercase tracking-[0.2em]"
           >
             Say Hello
           </Magnetic>
         </motion.div>
       </motion.div>
 
-      {/* Bottom metrics strip — slim, single row, no longer overlaps scroll cue */}
+      {/* Metrics strip */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 3.2, duration: 0.8 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 w-[min(94vw,720px)]"
+        className="absolute bottom-6 left-1/2 z-10 w-[min(94vw,720px)] -translate-x-1/2"
       >
-        <div className="flex items-center justify-between gap-4 rounded-full border border-hairline bg-surface-2/60 backdrop-blur-md px-5 py-3">
+        <div className="stats w-full rounded-full border border-base-300 bg-base-100/60 backdrop-blur-md">
           {heroMetrics.map((m, i) => (
             <motion.div
               key={m.label}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.4 + i * 0.1 }}
-              className="flex flex-col items-center text-center flex-1"
+              className="stat place-items-center gap-0 px-2 py-3 sm:px-4"
             >
               <div
-                className="font-display text-base sm:text-xl font-bold leading-none"
-                style={{ color: accentMap[m.accent] }}
+                className={`stat-value font-display text-base font-bold leading-none sm:text-xl ${accent(m.accent).text}`}
               >
                 {m.value}
               </div>
-              <div className="mt-1 font-mono-display text-[7px] sm:text-[9px] uppercase tracking-[0.1em] sm:tracking-[0.15em] text-muted-foreground block text-center leading-normal">
+              <div className="stat-title mt-1 text-center font-mono-display text-[7px] uppercase leading-normal tracking-[0.1em] sm:text-[9px] sm:tracking-[0.15em]">
                 {m.label}
               </div>
             </motion.div>
