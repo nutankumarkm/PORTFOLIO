@@ -1,7 +1,9 @@
 "use client";
 
+import { useCallback } from "react";
 import dynamic from "next/dynamic";
 
+import { scrollToStageSection } from "@/lib/scroll-stage";
 import { useIsMobileViewport } from "@/lib/viewport";
 import { SectionStage } from "@/components/portfolio/SectionStage";
 import { Cursor } from "@/components/portfolio/Cursor";
@@ -28,6 +30,11 @@ const Scene3D = dynamic(
 );
 
 export default function Home() {
+  // Stable identity so the 3D tree isn't re-reconciled on a parent render
+  const handleSelectProject = useCallback(() => {
+    scrollToStageSection("projects");
+  }, []);
+
   // Decided here rather than inside Scene3D: rendering the dynamic component at
   // all is what fetches three.js (~240KB gzipped), and phones never draw it.
   // `null` until hydration settles, so the chunk is only requested once the
@@ -36,9 +43,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-transparent">
-      {/* 3D WebGL scene in the fixed background. It animates on its own clock
-          and does not follow the scroll. */}
-      {isMobile === false && <Scene3D />}
+      {/* 3D WebGL scene in the fixed background. Each section has its own set of
+          models; the camera eases to a section's view when the page settles on
+          it, but never tracks the scroll position. */}
+      {isMobile === false && <Scene3D onSelectProject={handleSelectProject} />}
 
       <IntroLoader />
       <Cursor />
