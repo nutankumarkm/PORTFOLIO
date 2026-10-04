@@ -43,7 +43,7 @@ const WAYPOINTS: Record<
 };
 
 // Which 3D set is on camera for a given section. Only the sets near the camera
-// are mounted, so one scene's worth of frame time covers the whole page.
+// are drawn, so one scene's worth of frame time covers the whole page.
 const GROUP_FOR_SECTION: Record<string, string> = {
   hero: "core",
   about: "workspace",
@@ -75,33 +75,93 @@ const SCENE_SCRIM = "bg-base-100/35";
 
 // Parked, the scene is a slow-drifting backdrop and half the repaints means
 // half the WebGL work *and* half the backdrop-filter re-blurs on the glass
-// panels above it. Mid-flight it needs the full rate or the camera steps.
+// panels above it. Mid-flight it draws every display frame, or the camera
+// visibly steps against the page scrolling over it.
 const IDLE_FPS = 30;
-const FLIGHT_FPS = 60;
 
-// Drives rendering manually so the canvas can run below the display refresh
-// rate, at a rate the camera raises while it is moving.
-function FrameLimiter({ fpsRef }: { fpsRef: RefObject<number> }) {
-  const invalidate = useThree((s) => s.invalidate);
+// Frame timestamps wobble around the vsync interval. A quarter of a 60Hz frame
+// of slack keeps the idle rate from slipping a whole extra frame on that noise
+// at any common refresh rate (60, 90, 120, 144Hz).
+const IDLE_INTERVAL_MS = 1000 / IDLE_FPS - 4;
+
+/**
+ * Decides, once per display frame, whether that frame gets drawn.
+ *
+ * The canvas runs `frameloop="always"` so every useFrame callback sees every
+ * display frame; this is the only priority > 0 subscriber, which switches off
+ * R3F's automatic render and leaves the draw to it. Drawing inside the frame
+ * that asked for it is the point. The previous limiter restarted R3F's demand
+ * loop with `requestAnimationFrame` from within a frame callback, which always
+ * lands on the *next* frame — so the scene could only ever draw every other
+ * frame: 30fps mid-flight on a 60Hz screen, under a page scrolling at 60.
+ */
+function RenderStep({ flyingRef }: { flyingRef: RefObject<boolean> }) {
+  const lastRender = useRef(-Infinity);
+
+  useFrame(({ gl, scene, camera }) => {
+    // The frame's own timestamp, shared by every callback in it.
+    // performance.now() would add the jitter of where in the frame this runs.
+    const now = Number(document.timeline.currentTime ?? performance.now());
+    if (!flyingRef.current && now - lastRender.current < IDLE_INTERVAL_MS) {
+      return;
+    }
+    lastRender.current = now;
+    gl.render(scene, camera);
+  }, 1);
+
+  return null;
+}
+
+/**
+ * Compiles every set's shaders while the intro overlay is still up.
+ *
+ * Sets off the camera's path are hidden rather than unmounted, so all of their
+ * materials are already in the scene, and `compile` walks hidden objects too.
+ * The cost is paid once, here, instead of as a hitch the first time the camera
+ * flies into each set.
+ */
+function PrecompileShaders() {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const camera = useThree((s) => s.camera);
 
   useEffect(() => {
-    let rafId = 0;
-    let lastRender = 0;
+    if (gl.extensions.has("KHR_parallel_shader_compile")) {
+      // The driver compiles on its own threads; nothing here blocks.
+      gl.compileAsync(scene, camera).catch(() => {});
+      return;
+    }
 
-    const tick = (time: number) => {
-      rafId = requestAnimationFrame(tick);
-      // Backgrounded tabs stop rendering entirely.
-      if (document.hidden) return;
-      // Half a millisecond of slack: at 60 the vsync interval lands a hair
-      // under 1000/60 often enough to drop every other frame without it.
-      if (time - lastRender < 1000 / fpsRef.current - 0.5) return;
-      lastRender = time;
-      invalidate();
-    };
+    // Without that extension drivers defer the real work until a program's
+    // status is first read, which three does on the program's first draw. Read
+    // it now, behind the intro, rather than mid-flight into each set. Every
+    // program, not just each material's current one: transparent double-sided
+    // materials compile a back-face and a front-face variant.
+    gl.compile(scene, camera);
+    for (const program of gl.info.programs ?? []) program.getUniforms();
+  }, [gl, scene, camera]);
 
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [invalidate, fpsRef]);
+  return null;
+}
+
+/** True when neither the object nor any of its ancestors is hidden. */
+function isShown(object: THREE.Object3D | null): boolean {
+  for (let node = object; node; node = node.parent) {
+    if (!node.visible) return false;
+  }
+  return true;
+}
+
+/**
+ * three's raycaster ignores `visible`, so without this a hidden set's cubes and
+ * planets would still take hovers and clicks wherever they sit on screen.
+ */
+function VisibleHitsOnly() {
+  const setEvents = useThree((s) => s.setEvents);
+
+  useEffect(() => {
+    setEvents({ filter: (hits) => hits.filter((hit) => isShown(hit.object)) });
+  }, [setEvents]);
 
   return null;
 }
@@ -109,10 +169,10 @@ function FrameLimiter({ fpsRef }: { fpsRef: RefObject<number> }) {
 // Flies the camera along the waypoint curve at the shared stage position.
 function CameraFlight({
   path,
-  fpsRef,
+  flyingRef,
 }: {
   path: { position: THREE.CatmullRomCurve3; lookAt: THREE.CatmullRomCurve3 };
-  fpsRef: RefObject<number>;
+  flyingRef: RefObject<boolean>;
 }) {
   const { camera } = useThree();
   const target = useRef(getStageProgress());
@@ -131,12 +191,12 @@ function CameraFlight({
 
     if (Math.abs(remaining) < SETTLE_EPSILON) {
       current.current = target.current;
-      fpsRef.current = IDLE_FPS;
+      flyingRef.current = false;
     } else {
       // Exponential decay rather than a spring: it lands instead of
       // overshooting, which matters on the long traverses.
       current.current += remaining * (1 - Math.exp(-step * CAMERA_DAMPING));
-      fpsRef.current = FLIGHT_FPS;
+      flyingRef.current = true;
     }
 
     const t = STAGE_LAST > 0 ? current.current / STAGE_LAST : 0;
@@ -203,7 +263,9 @@ export default function Scene3D({ onSelectProject }: Scene3DProps) {
   const isMobile = useIsMobileViewport();
 
   const liveGroups = useLiveGroups();
-  const fpsRef = useRef(FLIGHT_FPS);
+  // Start as "flying" so the first frames draw at full rate while the camera
+  // settles onto wherever the page was restored to.
+  const flyingRef = useRef(true);
 
   // Centripetal parameterisation: the waypoints are unevenly spaced, and a
   // uniform spline loops back on itself between the far-apart ones.
@@ -239,8 +301,9 @@ export default function Scene3D({ onSelectProject }: Scene3DProps) {
         // Cap the pixel ratio: retina panels otherwise shade 4x the pixels for
         // a background element nobody is inspecting up close.
         dpr={[1, 1.5]}
-        // Rendering is driven by <FrameLimiter/> rather than the display refresh.
-        frameloop="demand"
+        // Every display frame runs the scene's callbacks; <RenderStep/> decides
+        // which of them are drawn.
+        frameloop="always"
         // Let R3F scale resolution down instead of dropping frames.
         performance={{ min: 0.5, debounce: 200 }}
         gl={{
@@ -265,17 +328,24 @@ export default function Scene3D({ onSelectProject }: Scene3DProps) {
         {/* Cinematic Grid Grid-plane to ground the coordinates */}
         <gridHelper args={[100, 40, gridColor1, gridColor2]} position={[0, -4, 0]} />
 
-        {/* Only the sets under the camera are mounted and animating */}
-        {liveGroups.includes("core") && <AICoreHero />}
-        {liveGroups.includes("workspace") && <WorkspaceAbout />}
-        {liveGroups.includes("orbit") && <OrbitSkills />}
-        {liveGroups.includes("cubes") && (
-          <GlassCubeProjects onSelectProject={onSelectProject} />
-        )}
-        {liveGroups.includes("tunnel") && <TimelineTunnel />}
+        {/* Every set stays mounted; those off the camera's path are hidden and
+            idle rather than unmounted. Unmounting changed the scene's light
+            count at each section boundary — which recompiles every lit shader
+            — and threw away the set's geometry, materials and programs, so the
+            flight hitched exactly as it crossed from one set to the next. */}
+        <AICoreHero active={liveGroups.includes("core")} />
+        <WorkspaceAbout active={liveGroups.includes("workspace")} />
+        <OrbitSkills active={liveGroups.includes("orbit")} />
+        <GlassCubeProjects
+          active={liveGroups.includes("cubes")}
+          onSelectProject={onSelectProject}
+        />
+        <TimelineTunnel active={liveGroups.includes("tunnel")} />
 
-        <CameraFlight path={path} fpsRef={fpsRef} />
-        <FrameLimiter fpsRef={fpsRef} />
+        <CameraFlight path={path} flyingRef={flyingRef} />
+        <RenderStep flyingRef={flyingRef} />
+        <PrecompileShaders />
+        <VisibleHitsOnly />
       </Canvas>
 
       {/* Sits above the canvas but stays click-through, so the project cubes

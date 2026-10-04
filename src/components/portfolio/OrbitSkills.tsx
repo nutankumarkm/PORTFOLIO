@@ -20,9 +20,11 @@ const PLANET_CONFIGS = [
 function SkillPlanet({
   config,
   skillsList,
+  active,
 }: {
   config: typeof PLANET_CONFIGS[number];
   skillsList: string[];
+  active: boolean;
 }) {
   const orbitRef = useRef<THREE.Group>(null);
   const planetRef = useRef<THREE.Mesh>(null);
@@ -32,6 +34,7 @@ function SkillPlanet({
   const tone = theme[config.tone];
 
   useFrame((state) => {
+    if (!active) return;
     const elapsed = state.clock.getElapsedTime();
 
     // Rotate orbit (retards speed on hover)
@@ -100,45 +103,48 @@ function SkillPlanet({
           )}
 
           {/* 3D HTML Label (Silver Glass card) */}
-          <Html position={[0, config.size + 0.3, 0]} center distanceFactor={8}>
-            <div
-              className={`flex flex-col items-center pointer-events-none select-none transition-all duration-300 ${
-                isHovered ? "scale-100 opacity-100 font-bold" : "scale-90 opacity-70"
-              }`}
-            >
-              <span
-                className="px-2 py-0.5 rounded font-mono-display text-[9px] border border-base-300 bg-base-100/95 text-base-content whitespace-nowrap shadow-md"
+          {active && (
+            <Html position={[0, config.size + 0.3, 0]} center distanceFactor={8}>
+              <div
+                className={`flex flex-col items-center pointer-events-none select-none transition-all duration-300 ${
+                  isHovered ? "scale-100 opacity-100 font-bold" : "scale-90 opacity-70"
+                }`}
               >
-                {config.label}
-              </span>
-
-              {/* Skill items list popup */}
-              {isHovered && (
-                <div
-                  className="mt-1.5 p-2 rounded-lg border border-base-300 bg-base-100/95 text-left text-[8px] font-mono leading-relaxed max-w-[150px] text-base-content/80 shadow-lg animate-fade-in"
+                <span
+                  className="px-2 py-0.5 rounded font-mono-display text-[9px] border border-base-300 bg-base-100/95 text-base-content whitespace-nowrap shadow-md"
                 >
-                  {skillsList.slice(0, 6).map((skill) => (
-                    <div key={skill} className="flex items-center gap-1">
-                      <span>•</span>
-                      <span>{skill}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </Html>
+                  {config.label}
+                </span>
+
+                {/* Skill items list popup */}
+                {isHovered && (
+                  <div
+                    className="mt-1.5 p-2 rounded-lg border border-base-300 bg-base-100/95 text-left text-[8px] font-mono leading-relaxed max-w-[150px] text-base-content/80 shadow-lg animate-fade-in"
+                  >
+                    {skillsList.slice(0, 6).map((skill) => (
+                      <div key={skill} className="flex items-center gap-1">
+                        <span>•</span>
+                        <span>{skill}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Html>
+          )}
         </group>
       </group>
     </group>
   );
 }
 
-export function OrbitSkills() {
+export function OrbitSkills({ active }: { active: boolean }) {
   const sunRef = useRef<THREE.Mesh>(null);
   const theme = useThemeColors();
 
   // Rotate central tech core
   useFrame((state) => {
+    if (!active) return;
     const elapsed = state.clock.getElapsedTime();
     if (sunRef.current) {
       sunRef.current.rotation.y = elapsed * 0.5;
@@ -147,33 +153,37 @@ export function OrbitSkills() {
 
   return (
     <group position={[0, 8, -10]}>
-      {/* Soft point light */}
-      <pointLight position={[0, 0, 0]} intensity={3.0} color={theme.primary} distance={12} decay={1.5} />
+      {/* Soft point light. Stays in the scene while the set is off, dimmed to
+          zero — see Scene3D. */}
+      <pointLight position={[0, 0, 0]} intensity={active ? 3.0 : 0} color={theme.primary} distance={12} decay={1.5} />
 
-      {/* Central Tech Nucleus (Sun - Wireframe) */}
-      <mesh ref={sunRef}>
-        <dodecahedronGeometry args={[0.9, 1]} />
-        <meshStandardMaterial
-          color={theme.primary}
-          emissive={theme.primary}
-          emissiveIntensity={0.6}
-          wireframe
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
-
-      {/* Render Orbits & Satellite Planets */}
-      {PLANET_CONFIGS.map((config, idx) => {
-        const skillsList = skillGroups[idx]?.items || [];
-        return (
-          <SkillPlanet
-            key={config.label}
-            config={config}
-            skillsList={skillsList}
+      <group visible={active}>
+        {/* Central Tech Nucleus (Sun - Wireframe) */}
+        <mesh ref={sunRef}>
+          <dodecahedronGeometry args={[0.9, 1]} />
+          <meshStandardMaterial
+            color={theme.primary}
+            emissive={theme.primary}
+            emissiveIntensity={0.6}
+            wireframe
+            transparent
+            opacity={0.8}
           />
-        );
-      })}
+        </mesh>
+
+        {/* Render Orbits & Satellite Planets */}
+        {PLANET_CONFIGS.map((config, idx) => {
+          const skillsList = skillGroups[idx]?.items || [];
+          return (
+            <SkillPlanet
+              key={config.label}
+              config={config}
+              skillsList={skillsList}
+              active={active}
+            />
+          );
+        })}
+      </group>
     </group>
   );
 }
