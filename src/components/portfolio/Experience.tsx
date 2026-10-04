@@ -38,7 +38,7 @@ export function Experience() {
           <div
             role="tablist"
             aria-label="Roles"
-            className="tabs tabs-box h-fit gap-1 bg-base-200/50 p-2 backdrop-blur-md max-lg:tabs-sm lg:flex-col lg:items-stretch"
+            className="tabs tabs-box h-fit gap-1 bg-base-200/90 p-2 max-lg:tabs-sm lg:flex-col lg:items-stretch"
           >
             {experience.map((item, i) => {
               const ia = accentClasses(accentByIndex[i % accentByIndex.length]);
@@ -77,7 +77,7 @@ export function Experience() {
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               role="tabpanel"
-              className="card relative overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md"
+              className="card relative overflow-hidden border border-base-300 bg-base-200/90"
             >
               {/* Accent strip */}
               <span

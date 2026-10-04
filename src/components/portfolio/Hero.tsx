@@ -53,20 +53,14 @@ export function Hero() {
     <section
       ref={containerRef}
       id="hero"
-      className="hero grain relative min-h-[100svh] w-full overflow-hidden"
+      className="hero relative min-h-[100svh] w-full overflow-hidden"
     >
       {/* Soft gradient halo, parallaxed against the pointer */}
       <motion.div
         className="pointer-events-none absolute inset-0"
         style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}
       >
-        <div
-          className="absolute left-1/2 top-1/2 h-[60vw] w-[60vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-[140px]"
-          style={{
-            background:
-              "radial-gradient(circle, color-mix(in oklch, var(--color-primary) 50%, transparent) 0%, transparent 65%)",
-          }}
-        />
+        <div className="glow-hero absolute left-1/2 top-1/2 h-[calc(60vw+372px)] w-[calc(60vw+372px)] -translate-x-1/2 -translate-y-1/2 opacity-30" />
       </motion.div>
 
       <MorphBlob
@@ -260,7 +254,7 @@ export function Hero() {
         transition={{ delay: 3.2, duration: 0.8 }}
         className="absolute bottom-6 left-1/2 z-10 w-[min(94vw,720px)] -translate-x-1/2"
       >
-        <div className="stats w-full rounded-full border border-base-300 bg-base-100/60 backdrop-blur-md">
+        <div className="stats w-full rounded-full border border-base-300 bg-base-100/85">
           {heroMetrics.map((m, i) => (
             <motion.div
               key={m.label}

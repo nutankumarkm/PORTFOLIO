@@ -84,7 +84,7 @@ export function HandSetup({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[130] grid place-items-center bg-base-100/92 px-4 backdrop-blur-xl"
+      className="fixed inset-0 z-[130] grid place-items-center bg-base-100/95 px-4"
       role="dialog"
       aria-modal="true"
       aria-label="Hand control setup"
@@ -144,7 +144,7 @@ export function HandSetup({
             )}
 
             {/* Live status strip */}
-            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-base-100/85 px-3 py-2 backdrop-blur-md">
+            <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-base-100/90 px-3 py-2">
               {ready && present ? (
                 <Check className="h-3.5 w-3.5 shrink-0 text-success" />
               ) : (

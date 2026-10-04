@@ -160,7 +160,7 @@ export function Contact() {
               builds, or research collaborations in distributed consensus.
             </p>
 
-            <ul className="list rounded-box border border-base-300 bg-base-200/40 backdrop-blur-md">
+            <ul className="list rounded-box border border-base-300 bg-base-200/90">
               {channels.map((c) => (
                 <li key={c.key} className="list-row">
                   <div
@@ -194,9 +194,9 @@ export function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="card relative min-h-[460px] overflow-hidden border border-base-300 bg-base-200/50 shadow-2xl backdrop-blur-md transition-colors duration-300 hover:border-base-content/20"
+            className="card relative min-h-[460px] overflow-hidden border border-base-300 bg-base-200/90 shadow-2xl transition-colors duration-300 hover:border-base-content/20"
           >
-            <div className="pointer-events-none absolute right-0 top-0 h-40 w-40 rounded-full bg-primary/5 blur-3xl" />
+            <div className="glow-orb-md pointer-events-none absolute -right-[141px] -top-[141px] h-[442px] w-[442px] text-primary/5" />
 
             <div className="card-body justify-between gap-6">
               <div>

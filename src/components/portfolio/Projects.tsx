@@ -47,7 +47,7 @@ export function Projects() {
                   <TiltCard
                     max={6}
                     scale={1.015}
-                    className="card relative h-full overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md transition-all duration-300 hover:border-base-content/20 hover:shadow-2xl"
+                    className="card relative h-full overflow-hidden border border-base-300 bg-base-200/90 transition-all duration-300 hover:border-base-content/20 hover:shadow-2xl"
                   >
                     {/* Index watermark */}
                     <div

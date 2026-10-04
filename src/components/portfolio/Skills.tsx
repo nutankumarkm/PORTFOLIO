@@ -33,9 +33,9 @@ const getLabelCoords = (index: number) => {
 export function Skills() {
   const [active, setActive] = useState(0);
 
-  // The vertex pulse is an endless JS-driven SVG animation, and it sits inside a
-  // backdrop-blurred card — every frame it ran re-painted that card even with
-  // the section scrolled away. Only mount it while the radar is on screen.
+  // The vertex pulse is an endless JS-driven SVG animation — every frame it ran
+  // re-painted the radar card even with the section scrolled away. Only mount
+  // it while the radar is on screen.
   const radarRef = useRef<HTMLDivElement>(null);
   const radarInView = useInView(radarRef);
   const current = skillGroups[active];
@@ -74,10 +74,13 @@ export function Skills() {
           {/* Radar */}
           <div
             ref={radarRef}
-            className="card relative min-h-[380px] items-center justify-center overflow-hidden border border-base-300 bg-base-200/45 p-6 shadow-xl backdrop-blur-md sm:min-h-[420px] sm:p-8"
+            className="card relative min-h-[380px] items-center justify-center overflow-hidden border border-base-300 bg-base-200/85 p-6 shadow-xl sm:min-h-[420px] sm:p-8"
           >
+            {/* Sits behind the card's own background, so its strength is tuned
+                to that background's opacity: 0.7 through 85% reads as the 0.2
+                that used to show through the old 45% glass. */}
             <div
-              className={`pointer-events-none absolute inset-0 -z-10 rounded-full opacity-20 blur-[80px] transition-colors duration-700 ${a.bg}`}
+              className={`glow-fill pointer-events-none absolute inset-0 -z-10 opacity-70 transition-colors duration-700 ${a.text}`}
             />
 
             <svg
@@ -231,7 +234,7 @@ export function Skills() {
             <div
               role="tablist"
               aria-label="Skill categories"
-              className="tabs tabs-box flex-wrap gap-1 bg-base-200/50 p-2 backdrop-blur-md"
+              className="tabs tabs-box flex-wrap gap-1 bg-base-200/85 p-2"
             >
               {skillGroups.map((g, i) => {
                 const ga = accentClasses(g.color);
@@ -272,10 +275,10 @@ export function Skills() {
                       transition={{ delay: i * 0.03, duration: 0.3 }}
                       whileHover={{ y: -4 }}
                       data-cursor="hover"
-                      className="card card-sm group relative cursor-default overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md transition-colors duration-300 hover:border-base-content/20 hover:bg-base-200/70"
+                      className="card card-sm group relative cursor-default overflow-hidden border border-base-300 bg-base-200/85 transition-colors duration-300 hover:border-base-content/20 hover:bg-base-200/95"
                     >
                       <div
-                        className={`absolute -right-12 -top-12 h-24 w-24 rounded-full opacity-0 blur-2xl transition-opacity group-hover:opacity-35 ${a.bg}`}
+                        className={`glow-orb-xs absolute -right-[136px] -top-[136px] h-[272px] w-[272px] opacity-0 transition-opacity group-hover:opacity-35 ${a.text}`}
                       />
                       <div className="card-body relative gap-2">
                         <div className="flex items-center justify-between">
@@ -299,7 +302,7 @@ export function Skills() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false }}
-          className="stats stats-vertical mt-16 w-full border border-base-300 bg-base-200/50 shadow-xl backdrop-blur-md sm:stats-horizontal"
+          className="stats stats-vertical mt-16 w-full border border-base-300 bg-base-200/85 shadow-xl sm:stats-horizontal"
         >
           {[
             { value: "6", label: "Categories", tone: "text-primary" },
