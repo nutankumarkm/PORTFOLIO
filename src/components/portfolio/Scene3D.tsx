@@ -1,17 +1,11 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type RefObject,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 import { useThemeColors } from "@/lib/theme-colors";
+import { useIsMobileViewport } from "@/lib/viewport";
 import {
   STAGE_LAST,
   STAGE_SECTIONS,
@@ -78,19 +72,6 @@ const SETTLE_EPSILON = 0.0004;
 // survive without it, the scene itself is softened once, here. Raise for more
 // contrast behind text, drop to 0 to see the scene at full strength.
 const SCENE_SCRIM = "bg-base-100/35";
-
-/* Viewport check as an external store — no effect, no setState-on-mount. */
-const MOBILE_QUERY = "(max-width: 767px)";
-
-const subscribeMobile = (onChange: () => void) => {
-  if (typeof window === "undefined") return () => {};
-  const mq = window.matchMedia(MOBILE_QUERY);
-  mq.addEventListener("change", onChange);
-  return () => mq.removeEventListener("change", onChange);
-};
-
-const getMobileSnapshot = () => window.matchMedia(MOBILE_QUERY).matches;
-const getServerMobileSnapshot = () => false;
 
 // Parked, the scene is a slow-drifting backdrop and half the repaints means
 // half the WebGL work *and* half the backdrop-filter re-blurs on the glass
@@ -218,11 +199,8 @@ export default function Scene3D({ onSelectProject }: Scene3DProps) {
   const theme = useThemeColors();
   const { isDark } = theme;
 
-  const isMobile = useSyncExternalStore(
-    subscribeMobile,
-    getMobileSnapshot,
-    getServerMobileSnapshot
-  );
+  // The page only mounts the scene on desktop; this guards direct use.
+  const isMobile = useIsMobileViewport();
 
   const liveGroups = useLiveGroups();
   const fpsRef = useRef(FLIGHT_FPS);

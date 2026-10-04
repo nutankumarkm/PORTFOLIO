@@ -1,5 +1,12 @@
 const EMBED_URL = "https://integrate.api.nvidia.com/v1/embeddings";
 
+/**
+ * The query embedding sits in front of the chat completion on every message,
+ * so a slow embeddings endpoint delays the whole reply. Past this, retrieval
+ * gives up on the dense half and goes lexical-only.
+ */
+const EMBED_TIMEOUT_MS = 3_000;
+
 /** Unit-normalise so cosine similarity reduces to a dot product. */
 export function normalize(vector: number[]): number[] {
   let sum = 0;
@@ -44,6 +51,7 @@ export async function embedQuery(query: string, model: string): Promise<number[]
         truncate: "END",
         encoding_format: "float",
       }),
+      signal: AbortSignal.timeout(EMBED_TIMEOUT_MS),
     });
 
     if (!response.ok) {

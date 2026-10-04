@@ -1,4 +1,13 @@
-@import "tailwindcss";
+/* Class detection is scoped to the code that actually renders. Left on
+   automatic detection, Tailwind also scans the blog markdown, the generated RAG
+   index and the unused shadcn kit in components/ui — every prose word that
+   happens to be a utility or daisyUI component name ("menu", "steps", "table",
+   "timeline", …) then ships as render-blocking CSS on every page. Add a path
+   here when new components live outside these folders. */
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components/portfolio";
+@source "../lib";
 @import "tw-animate-css";
 @plugin "daisyui" {
   themes: light --default, dark --prefersdark, corporate, business, nord,
@@ -290,6 +299,42 @@
   50%,
   100% {
     opacity: 0;
+  }
+}
+
+/* Endless decorative loops live here rather than in Framer: Framer drives
+   `rotate`/`scale`/`y` from JavaScript on every frame — on screen or not —
+   while a CSS transform animation runs on the compositor for free. */
+
+/* Hero scroll cue: the bar sweeps down its track, then restarts. */
+@keyframes scroll-cue {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* Footer "back to top" arrow. */
+@keyframes nudge-up {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Achievement card orbs. */
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
   }
 }
 

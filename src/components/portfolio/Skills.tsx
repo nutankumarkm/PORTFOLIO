@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
 import { skillGroups } from "@/lib/portfolio-data";
 import { accent as accentClasses } from "@/lib/accent";
 import { SectionHeading } from "./SectionHeading";
@@ -32,6 +32,12 @@ const getLabelCoords = (index: number) => {
 
 export function Skills() {
   const [active, setActive] = useState(0);
+
+  // The vertex pulse is an endless JS-driven SVG animation, and it sits inside a
+  // backdrop-blurred card — every frame it ran re-painted that card even with
+  // the section scrolled away. Only mount it while the radar is on screen.
+  const radarRef = useRef<HTMLDivElement>(null);
+  const radarInView = useInView(radarRef);
   const current = skillGroups[active];
   const a = accentClasses(current.color);
 
@@ -66,7 +72,10 @@ export function Skills() {
 
         <div className="mt-16 grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           {/* Radar */}
-          <div className="card relative min-h-[380px] items-center justify-center overflow-hidden border border-base-300 bg-base-200/45 p-6 shadow-xl backdrop-blur-md sm:min-h-[420px] sm:p-8">
+          <div
+            ref={radarRef}
+            className="card relative min-h-[380px] items-center justify-center overflow-hidden border border-base-300 bg-base-200/45 p-6 shadow-xl backdrop-blur-md sm:min-h-[420px] sm:p-8"
+          >
             <div
               className={`pointer-events-none absolute inset-0 -z-10 rounded-full opacity-20 blur-[80px] transition-colors duration-700 ${a.bg}`}
             />
@@ -182,7 +191,7 @@ export function Skills() {
                       onMouseEnter={() => setActive(i)}
                       onClick={() => setActive(i)}
                     />
-                    {isSelected && (
+                    {isSelected && radarInView && (
                       <motion.circle
                         cx={x}
                         cy={y}

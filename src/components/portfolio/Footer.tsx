@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { profile, navItems } from "@/lib/portfolio-data";
 
 export function Footer() {
@@ -26,10 +25,9 @@ export function Footer() {
           <aside className="max-w-xs">
             <div className="mb-4 flex items-center gap-3">
               <div className="relative flex h-10 w-10 items-center justify-center">
-                <motion.div
+                <div
                   className="absolute inset-0 rounded-full border border-primary/60"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                  style={{ animation: "spin-slow 12s linear infinite" }}
                 />
                 <span className="font-display text-sm font-bold text-primary">
                   {profile.initials}
@@ -115,12 +113,9 @@ export function Footer() {
             className="btn btn-ghost btn-sm justify-self-end gap-2 font-mono-display text-[10px] uppercase tracking-[0.25em]"
           >
             Back to top
-            <motion.span
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-            >
+            <span style={{ animation: "nudge-up 1.4s ease-in-out infinite" }}>
               ↑
-            </motion.span>
+            </span>
           </button>
         </footer>
       </div>
