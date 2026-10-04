@@ -32,21 +32,19 @@ export function Achievements() {
                 className="card group relative overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md transition-all duration-300 hover:border-base-content/20 hover:shadow-2xl"
               >
                 {/* Decorative orb */}
-                <motion.div
+                <div
                   className={`absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-30 blur-2xl ${a.bg}`}
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  style={{ animation: "breathe 4s ease-in-out infinite" }}
                 />
 
                 <div className="card-body relative flex-row items-start gap-4">
                   {/* Rotating star */}
-                  <motion.svg
+                  <svg
                     width="36"
                     height="36"
                     viewBox="0 0 36 36"
                     className="mt-1 shrink-0"
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                    style={{ animation: "spin-slow 20s linear infinite" }}
                     aria-hidden
                   >
                     <path
@@ -54,7 +52,7 @@ export function Achievements() {
                       strokeWidth="1"
                       className={`${a.stroke} ${a.fill} [fill-opacity:0.13]`}
                     />
-                  </motion.svg>
+                  </svg>
 
                   <div className="flex-1">
                     <div

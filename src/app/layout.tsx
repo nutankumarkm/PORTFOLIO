@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter_Tight } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/portfolio/ThemeProvider";
 
 /* The whole type system hangs off these three variables — globals.css maps
@@ -74,7 +73,6 @@ export default function RootLayout({
         className={`${interTight.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider>{children}</ThemeProvider>
-        <Toaster />
       </body>
     </html>
   );

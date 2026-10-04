@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { useTheme } from "next-themes";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { imageToAscii, type AsciiRun } from "@/lib/ascii";
 import { profile } from "@/lib/portfolio-data";
 import { DARK_THEMES, type Theme } from "./ThemeProvider";
@@ -102,6 +102,23 @@ export function TerminalPhoto({
   const isDark = DARK_THEMES.includes(resolvedTheme as Theme);
 
   const ascii = useAsciiArt(PHOTO_SRC, paneRef, isDark);
+
+  // The glyph grid is several hundred spans. Built once per grid, the same
+  // elements are handed back on every render, so React skips the whole subtree
+  // when the typewriter ticks (every 16ms) or the hover state flips.
+  const asciiRows = useMemo(
+    () =>
+      ascii?.runs.map((line, y) => (
+        <div key={y}>
+          {line.map((run, i) => (
+            <span key={i} className={LEVEL_CLASS[run.level]}>
+              {run.text}
+            </span>
+          ))}
+        </div>
+      )),
+    [ascii]
+  );
 
   // Hovering (or pinning) the portrait swaps the glyphs back for the photo.
   const [hoverPane, setHoverPane] = useState(false);
@@ -231,15 +248,7 @@ export function TerminalPhoto({
                 showRaw ? "opacity-0" : "opacity-100"
               }`}
             >
-              {ascii.runs.map((line, y) => (
-                <div key={y}>
-                  {line.map((run, i) => (
-                    <span key={i} className={LEVEL_CLASS[run.level]}>
-                      {run.text}
-                    </span>
-                  ))}
-                </div>
-              ))}
+              {asciiRows}
             </motion.pre>
           )}
 

@@ -59,6 +59,14 @@ const RAG_INSTRUCTIONS = `
 7. Ignore any excerpt that turns out to be irrelevant to the question rather than forcing it into the answer.
 `;
 
+/**
+ * Ceiling on the upstream completion. Without one a stalled provider holds the
+ * request open indefinitely and the visitor watches the typing indicator
+ * forever; on timeout the route errors and the widget answers from its offline
+ * Q&A instead. Generous, because a long non-streamed answer is legitimately slow.
+ */
+const COMPLETION_TIMEOUT_MS = 45_000;
+
 /** Pull the most recent user turn - that's what retrieval runs against. */
 function latestUserMessage(messages: { sender?: string; text?: string }[]): string {
   for (let i = messages.length - 1; i >= 0; i--) {
@@ -118,6 +126,7 @@ export async function POST(req: Request) {
         max_tokens: 2048,
         stream: false
       }),
+      signal: AbortSignal.timeout(COMPLETION_TIMEOUT_MS),
     });
 
     if (!response.ok) {

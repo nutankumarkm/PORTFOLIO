@@ -115,11 +115,12 @@ export function Hero() {
           Scroll
         </span>
         <div className="relative h-16 w-px overflow-hidden bg-base-300">
-          <motion.span
+          <span
             className="absolute left-0 top-0 w-full bg-primary"
-            animate={{ y: ["-100%", "100%"] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-            style={{ height: "50%" }}
+            style={{
+              height: "50%",
+              animation: "scroll-cue 1.8s ease-in-out infinite",
+            }}
           />
         </div>
       </motion.div>
@@ -203,13 +204,12 @@ export function Hero() {
           className="mt-6 flex items-center gap-3 font-mono-display text-xs uppercase tracking-[0.25em] sm:text-sm"
         >
           <span className="text-base-content/60">{profile.role}</span>
-          <motion.span
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          <span
             className="inline-block text-primary"
+            style={{ animation: "spin-slow 4s linear infinite" }}
           >
             ✦
-          </motion.span>
+          </span>
           <span className="text-primary">{profile.roleAlt}</span>
         </motion.div>
 

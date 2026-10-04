@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import dynamic from "next/dynamic";
 
 import { scrollToStageSection } from "@/lib/scroll-stage";
+import { useIsMobileViewport } from "@/lib/viewport";
 import { SectionStage } from "@/components/portfolio/SectionStage";
 import { Cursor } from "@/components/portfolio/Cursor";
 import { ScrollProgress } from "@/components/portfolio/ScrollProgress";
@@ -35,11 +36,17 @@ export default function Home() {
     scrollToStageSection("projects");
   }, []);
 
+  // Decided here rather than inside Scene3D: rendering the dynamic component at
+  // all is what fetches three.js (~240KB gzipped), and phones never draw it.
+  // `null` until hydration settles, so the chunk is only requested once the
+  // viewport is known to be desktop-sized.
+  const isMobile = useIsMobileViewport();
+
   return (
     <div className="relative min-h-screen flex flex-col bg-transparent">
       {/* 3D WebGL Scene in fixed background. Its camera and the sections below
           both animate off the shared stage position — see lib/scroll-stage. */}
-      <Scene3D onSelectProject={handleSelectProject} />
+      {isMobile === false && <Scene3D onSelectProject={handleSelectProject} />}
 
       <IntroLoader />
       <Cursor />

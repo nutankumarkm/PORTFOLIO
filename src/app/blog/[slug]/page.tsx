@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getBlogPostBySlug, getBlogPosts } from "@/lib/blog";
 import { BlogPostDetail } from "@/components/portfolio/BlogPostDetail";
+import { BlogMarkdown } from "@/components/portfolio/BlogMarkdown";
 import type { Metadata } from "next";
 
 interface RouteParams {
@@ -47,5 +48,9 @@ export default async function BlogPostPage({ params }: RouteParams) {
     notFound();
   }
 
-  return <BlogPostDetail post={post} />;
+  return (
+    <BlogPostDetail metadata={post.metadata}>
+      <BlogMarkdown content={post.content} />
+    </BlogPostDetail>
+  );
 }

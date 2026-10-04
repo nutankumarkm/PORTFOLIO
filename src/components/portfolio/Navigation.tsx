@@ -86,10 +86,9 @@ export function Navigation() {
               ariaLabel="Go to top"
             >
               <div className="relative flex h-8 w-8 items-center justify-center">
-                <motion.div
+                <div
                   className="absolute inset-0 rounded-full border border-primary/60"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                  style={{ animation: "spin-slow 8s linear infinite" }}
                 />
                 <span className="font-display text-[12px] font-bold text-primary">
                   {profile.initials}

@@ -1,6 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef, type RefObject } from "react";
+import {
+  animate,
+  motion,
+  useInView,
+  type AnimationPlaybackControls,
+} from "framer-motion";
 
 interface MorphBlobProps {
   className?: string;
@@ -19,31 +25,71 @@ const PATHS = [
   "M 115,22 C 170,30 198,80 198,128 C 198,180 150,202 100,200 C 50,198 22,150 28,100 C 34,55 70,18 115,22 Z",
 ];
 
+/**
+ * Runs the blob's endless morph only while the SVG is on screen.
+ *
+ * Interpolating `d` is main-thread work the compositor can't take over: every
+ * frame costs a style, layout and paint pass, and with blobs spread down the
+ * page that was being paid continuously for shapes nobody could see. Pausing
+ * (rather than stopping) keeps each loop's place, so a blob scrolled back into
+ * view carries on from where it was instead of snapping to its first shape.
+ */
+function useMorphWhileVisible(
+  svgRef: RefObject<SVGSVGElement | null>,
+  start: (paths: SVGPathElement[]) => AnimationPlaybackControls[],
+  duration: number
+) {
+  const inView = useInView(svgRef);
+  const loops = useRef<AnimationPlaybackControls[]>([]);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    loops.current = start(Array.from(svg.querySelectorAll("path")));
+    return () => {
+      loops.current.forEach((loop) => loop.stop());
+      loops.current = [];
+    };
+  }, [svgRef, duration]);
+
+  // Declared after the effect above so a blob that mounts off screen is
+  // paused before it ever paints a frame.
+  useEffect(() => {
+    loops.current.forEach((loop) => (inView ? loop.play() : loop.pause()));
+  }, [inView, duration]);
+}
+
 export function MorphBlob({
   className = "",
   color = "var(--color-primary)",
   duration = 14,
   opacity = 0.18,
 }: MorphBlobProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useMorphWhileVisible(
+    svgRef,
+    (paths) =>
+      paths.map((path) =>
+        animate(
+          path,
+          { d: PATHS },
+          { duration, repeat: Infinity, ease: "easeInOut" }
+        )
+      ),
+    duration
+  );
+
   return (
     <svg
+      ref={svgRef}
       viewBox="0 0 220 220"
       className={className}
       fill="none"
       preserveAspectRatio="xMidYMid meet"
       aria-hidden
     >
-      <motion.path
-        d={PATHS[0]}
-        fill={color}
-        opacity={opacity}
-        animate={{ d: PATHS }}
-        transition={{
-          duration,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      />
+      <motion.path d={PATHS[0]} fill={color} opacity={opacity} />
     </svg>
   );
 }
@@ -54,8 +100,31 @@ export function MorphBlobLines({
   color = "var(--color-primary)",
   duration = 18,
 }: MorphBlobProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useMorphWhileVisible(
+    svgRef,
+    (paths) =>
+      paths.map((path, i) =>
+        animate(
+          path,
+          {
+            d: PATHS,
+            opacity: [0.18 - i * 0.025, 0.05, 0.18 - i * 0.025],
+          },
+          {
+            duration: duration + i * 1.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }
+        )
+      ),
+    duration
+  );
+
   return (
     <svg
+      ref={svgRef}
       viewBox="0 0 220 220"
       className={className}
       fill="none"
@@ -70,15 +139,6 @@ export function MorphBlobLines({
           strokeWidth={1}
           fill="none"
           opacity={0.18 - i * 0.025}
-          animate={{
-            d: PATHS,
-            opacity: [0.18 - i * 0.025, 0.05, 0.18 - i * 0.025],
-          }}
-          transition={{
-            duration: duration + i * 1.2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
           style={{
             transform: `scale(${1 + i * 0.08})`,
             transformOrigin: "center",

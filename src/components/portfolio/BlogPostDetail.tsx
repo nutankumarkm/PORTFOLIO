@@ -3,17 +3,26 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowLeft, BookOpen, Calendar, Tag } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import type { BlogPost } from "@/lib/blog";
+import type { ReactNode } from "react";
+import type { BlogPostMetadata } from "@/lib/blog";
 import { Navigation } from "./Navigation";
 import { Footer } from "./Footer";
 import { Cursor } from "./Cursor";
 import { ScrollProgress } from "./ScrollProgress";
 import { Magnetic } from "./Magnetic";
 
-export function BlogPostDetail({ post }: { post: BlogPost }) {
-  const { metadata, content } = post;
-
+/**
+ * Interactive shell around a post. The body arrives as `children` already
+ * rendered on the server (see BlogMarkdown), so only the metadata crosses into
+ * the client bundle.
+ */
+export function BlogPostDetail({
+  metadata,
+  children,
+}: {
+  metadata: BlogPostMetadata;
+  children: ReactNode;
+}) {
   return (
     <div className="relative flex min-h-screen flex-col bg-base-100">
       <Cursor />
@@ -78,73 +87,8 @@ export function BlogPostDetail({ post }: { post: BlogPost }) {
         </header>
 
         {/* Article Body */}
-        {/* Element renderers below do the styling; the typography plugin is
-            not installed, so no `prose` classes are used here. */}
         <article className="mt-10 max-w-none font-sans">
-          <ReactMarkdown
-            components={{
-              // Custom code block renderer for clean, custom styling without heavy plugins
-              code({ node, className, children, ...props }) {
-                // Determine if code block is block or inline
-                const isBlock = className && className.startsWith("language-");
-                
-                return isBlock ? (
-                  <div className="my-6 overflow-hidden rounded-box border border-base-300 bg-base-200/60">
-                    {/* Header bar */}
-                    <div className="flex items-center justify-between border-b border-base-300 bg-base-300/50 px-4 py-2 font-mono-display text-[10px] uppercase tracking-wider text-base-content/60">
-                      <span>{className.replace("language-", "")}</span>
-                      <span>Code</span>
-                    </div>
-                    <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-base-content sm:text-sm">
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    </pre>
-                  </div>
-                ) : (
-                  <code
-                    className="rounded-field border border-base-300 bg-base-200 px-1.5 py-0.5 font-mono text-xs text-primary"
-                    {...props}
-                  >
-                    {children}
-                  </code>
-                );
-              },
-              h2: ({ children }) => (
-                <h2 className="mb-4 mt-10 border-b border-base-300 pb-2 font-display text-2xl font-bold">
-                  {children}
-                </h2>
-              ),
-              p: ({ children }) => (
-                <p className="my-4 text-base leading-relaxed text-base-content/80">
-                  {children}
-                </p>
-              ),
-              ul: ({ children }) => (
-                <ul className="my-4 list-disc space-y-1.5 pl-6 text-base-content/80">
-                  {children}
-                </ul>
-              ),
-              li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-              a: ({ href, children }) => (
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="link link-primary font-medium"
-                >
-                  {children}
-                </a>
-              ),
-              blockquote: ({ children }) => (
-                <blockquote className="my-6 rounded-r-box border-l-4 border-primary/60 bg-base-200/40 px-5 py-4 italic leading-relaxed text-base-content/70">
-                  {children}
-                </blockquote>
-              ),
-            }}
-          >
-            {content}
-          </ReactMarkdown>
+          {children}
         </article>
       </main>
 
