@@ -5,11 +5,11 @@ import { useSyncExternalStore } from "react";
 /**
  * One scroll driver for the whole landing page.
  *
- * The WebGL backdrop and the HTML sections both read their motion from the same
- * fractional position, so the camera flight and the section transitions are one
- * animation sampled twice: `2.35` means "35% of the way from Skills to Job Fit"
- * to every consumer. Nothing here owns a timeline of its own, which is why the
- * background can never drift out of step with the page.
+ * The section transitions and the section rail read their motion from one
+ * fractional position: `2.35` means "35% of the way from Skills to Job Fit" to
+ * every consumer. Nothing here owns a timeline of its own, so they can never
+ * drift out of step with the page. (The 3D backdrop deliberately does not
+ * follow it — it animates on its own clock.)
  *
  * Positions are measured with `offsetTop`/`offsetHeight` rather than
  * `getBoundingClientRect()` on purpose — the sections carry a scroll-driven
@@ -22,7 +22,7 @@ export interface StageSection {
   label: string;
 }
 
-/** DOM order of the landing page. Index === waypoint index in the 3D scene. */
+/** DOM order of the landing page. Index === stage position of that section. */
 export const STAGE_SECTIONS: StageSection[] = [
   { id: "hero", label: "Home" },
   { id: "about", label: "About" },
@@ -182,8 +182,8 @@ function release() {
 
 /**
  * Per-frame fractional position, delivered outside React so consumers can drive
- * motion values or a WebGL camera without a render per scroll tick. Fires once
- * on subscribe with the current value.
+ * motion values without a render per scroll tick. Fires once on subscribe with
+ * the current value.
  */
 export function subscribeStageFrame(
   listener: (progress: number) => void

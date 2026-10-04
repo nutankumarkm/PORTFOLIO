@@ -11,7 +11,7 @@ import {
 import { STAGE_SECTIONS, subscribeStageFrame } from "@/lib/scroll-stage";
 
 interface SectionStageProps {
-  /** Section id — resolves to the waypoint the 3D camera flies to. */
+  /** Section id — resolves to the section's stage position. */
   id: string;
   children: ReactNode;
 }
@@ -19,9 +19,9 @@ interface SectionStageProps {
 /**
  * Ties one HTML section to the shared stage position.
  *
- * `offset` is the section's distance from the camera's current waypoint in
+ * `offset` is the section's distance from the current stage position in
  * section units: 0 when it owns the frame, -1 while it is still one section
- * ahead, +1 once the flight has moved on. Everything is driven off motion
+ * ahead, +1 once the page has moved on. Everything is driven off motion
  * values, so a scroll costs a compositor update rather than a React render.
  */
 export function SectionStage({ id, children }: SectionStageProps) {
@@ -38,7 +38,7 @@ export function SectionStage({ id, children }: SectionStageProps) {
   }, [index, offset, reduced]);
 
   // Held flat across the middle so a section is fully legible for its whole
-  // stay, then handed over during the traverse the camera is already flying.
+  // stay, then handed over while the page travels to the next one.
   const opacity = useTransform(
     offset,
     [-1, -0.45, 0, 0.45, 1],

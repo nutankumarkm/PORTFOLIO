@@ -6,7 +6,7 @@ import * as THREE from "three";
 
 import { useThemeColors } from "@/lib/theme-colors";
 
-export function AICoreHero({ active }: { active: boolean }) {
+export function AICoreHero() {
   const innerRef = useRef<THREE.Mesh>(null);
   const outerRef = useRef<THREE.Mesh>(null);
   const particlesRef = useRef<THREE.Points>(null);
@@ -25,7 +25,6 @@ export function AICoreHero({ active }: { active: boolean }) {
 
   // 2. Animate meshes in the R3F frame loop
   useFrame((state) => {
-    if (!active) return;
     const elapsed = state.clock.getElapsedTime();
 
     // Rotate core elements
@@ -56,77 +55,74 @@ export function AICoreHero({ active }: { active: boolean }) {
 
   return (
     <group position={[0, 0, 0]}>
-      {/* Soft point light (two co-located lights merged into one). Stays in
-          the scene while the set is off, dimmed to zero — see Scene3D. */}
+      {/* Soft point light (two co-located lights merged into one) */}
       <pointLight
         position={[0, 0, 0]}
-        intensity={active ? 4.0 : 0}
+        intensity={4.0}
         color={theme.primary}
         distance={10}
         decay={2}
       />
 
-      <group visible={active}>
-        {/* Floating Particles System */}
-        <points ref={particlesRef}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              args={[positions, 3]}
-            />
-          </bufferGeometry>
-          <pointsMaterial
-            color={theme.isDark ? theme.base300 : theme.primary}
-            size={0.06}
-            transparent
-            opacity={theme.isDark ? 0.65 : 0.45}
-            blending={blending}
-            depthWrite={false}
+      {/* Floating Particles System */}
+      <points ref={particlesRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            args={[positions, 3]}
           />
-        </points>
+        </bufferGeometry>
+        <pointsMaterial
+          color={theme.isDark ? theme.base300 : theme.primary}
+          size={0.06}
+          transparent
+          opacity={theme.isDark ? 0.65 : 0.45}
+          blending={blending}
+          depthWrite={false}
+        />
+      </points>
 
-        {/* 3D Outer Cage (Geometric Shield) */}
-        <mesh ref={outerRef}>
-          <icosahedronGeometry args={[1.8, 1]} />
-          <meshBasicMaterial
-            color={theme.accent}
-            wireframe
-            transparent
-            opacity={theme.isDark ? 0.35 : 0.5}
-            blending={blending}
-          />
-        </mesh>
+      {/* 3D Outer Cage (Geometric Shield) */}
+      <mesh ref={outerRef}>
+        <icosahedronGeometry args={[1.8, 1]} />
+        <meshBasicMaterial
+          color={theme.accent}
+          wireframe
+          transparent
+          opacity={theme.isDark ? 0.35 : 0.5}
+          blending={blending}
+        />
+      </mesh>
 
-        {/* 3D Middle Wireframe Sphere */}
-        <mesh ref={innerRef}>
-          <sphereGeometry args={[1.2, 16, 12]} />
-          <meshStandardMaterial
-            color={theme.primary}
-            wireframe
-            emissive={theme.primary}
-            emissiveIntensity={0.5}
-            transparent
-            opacity={theme.isDark ? 0.4 : 0.55}
-          />
-        </mesh>
+      {/* 3D Middle Wireframe Sphere */}
+      <mesh ref={innerRef}>
+        <sphereGeometry args={[1.2, 16, 12]} />
+        <meshStandardMaterial
+          color={theme.primary}
+          wireframe
+          emissive={theme.primary}
+          emissiveIntensity={0.5}
+          transparent
+          opacity={theme.isDark ? 0.4 : 0.55}
+        />
+      </mesh>
 
-        {/* Inner Glowing Core Nucleus
-            NOTE: `transmission` is deliberately avoided here and on every other
-            material in the scene — three.js re-renders the whole scene into a
-            separate target for each transmissive mesh, once per frame. */}
-        <mesh>
-          <sphereGeometry args={[0.7, 24, 16]} />
-          <meshStandardMaterial
-            color={theme.primary}
-            emissive={theme.primary}
-            emissiveIntensity={0.6}
-            roughness={0.15}
-            metalness={0.05}
-            transparent
-            opacity={0.72}
-          />
-        </mesh>
-      </group>
+      {/* Inner Glowing Core Nucleus
+          NOTE: `transmission` is deliberately avoided here and on every other
+          material in the scene — three.js re-renders the whole scene into a
+          separate target for each transmissive mesh, once per frame. */}
+      <mesh>
+        <sphereGeometry args={[0.7, 24, 16]} />
+        <meshStandardMaterial
+          color={theme.primary}
+          emissive={theme.primary}
+          emissiveIntensity={0.6}
+          roughness={0.15}
+          metalness={0.05}
+          transparent
+          opacity={0.72}
+        />
+      </mesh>
     </group>
   );
 }
