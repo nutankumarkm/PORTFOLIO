@@ -20,11 +20,13 @@ function ProjectCube({
   idx,
   position,
   onSelect,
+  active,
 }: {
   project: typeof projects[number];
   idx: number;
   position: [number, number, number];
   onSelect: () => void;
+  active: boolean;
 }) {
   const groupRef = useRef<THREE.Group>(null);
   const meshRef = useRef<THREE.Mesh>(null);
@@ -44,6 +46,7 @@ function ProjectCube({
 
   // Perform floating drift, spin acceleration, and smooth hover scale lerps
   useFrame((state) => {
+    if (!active) return;
     const elapsed = state.clock.getElapsedTime();
 
     if (groupRef.current) {
@@ -106,45 +109,57 @@ function ProjectCube({
       </mesh>
 
       {/* 3D Monospace Title projection (Silver Glass Card) */}
-      <Html position={[0, 0.7, 0]} center distanceFactor={7}>
-        <div
-          className={`flex flex-col items-center pointer-events-none select-none transition-all duration-300 ${
-            isHovered ? "scale-105 opacity-100 font-bold" : "scale-95 opacity-60"
-          }`}
-        >
-          <span
-            className="px-2 py-0.5 rounded border border-base-300 bg-base-100/95 text-base-content font-mono text-[8px] sm:text-[9px] whitespace-nowrap shadow-md"
+      {active && (
+        <Html position={[0, 0.7, 0]} center distanceFactor={7}>
+          <div
+            className={`flex flex-col items-center pointer-events-none select-none transition-all duration-300 ${
+              isHovered ? "scale-105 opacity-100 font-bold" : "scale-95 opacity-60"
+            }`}
           >
-            {project.title.split(" ")[0]}..
-          </span>
-        </div>
-      </Html>
+            <span
+              className="px-2 py-0.5 rounded border border-base-300 bg-base-100/95 text-base-content font-mono text-[8px] sm:text-[9px] whitespace-nowrap shadow-md"
+            >
+              {project.title.split(" ")[0]}..
+            </span>
+          </div>
+        </Html>
+      )}
     </group>
   );
 }
 
-export function GlassCubeProjects({ onSelectProject }: { onSelectProject: (idx: number) => void }) {
+export function GlassCubeProjects({
+  active,
+  onSelectProject,
+}: {
+  active: boolean;
+  onSelectProject: (idx: number) => void;
+}) {
   const theme = useThemeColors();
 
   return (
     <group position={[-8, 0, 0]}>
-      {/* Local point lights targeting project coordinates */}
-      <pointLight position={[-2, 2, 2]} intensity={2.0} color={theme.primary} distance={8} />
-      <pointLight position={[2, -2, 2]} intensity={2.0} color={theme.accent} distance={8} />
+      {/* Local point lights targeting project coordinates. They stay in the
+          scene while the set is off, dimmed to zero — see Scene3D. */}
+      <pointLight position={[-2, 2, 2]} intensity={active ? 2.0 : 0} color={theme.primary} distance={8} />
+      <pointLight position={[2, -2, 2]} intensity={active ? 2.0 : 0} color={theme.accent} distance={8} />
 
-      {/* Render 4 Projects Cubes */}
-      {projects.map((p, idx) => {
-        const position = CUBE_POSITIONS[idx] || [0, 0, 0];
-        return (
-          <ProjectCube
-            key={p.title}
-            project={p}
-            idx={idx}
-            position={position}
-            onSelect={() => onSelectProject(idx)}
-          />
-        );
-      })}
+      <group visible={active}>
+        {/* Render 4 Projects Cubes */}
+        {projects.map((p, idx) => {
+          const position = CUBE_POSITIONS[idx] || [0, 0, 0];
+          return (
+            <ProjectCube
+              key={p.title}
+              project={p}
+              idx={idx}
+              position={position}
+              onSelect={() => onSelectProject(idx)}
+              active={active}
+            />
+          );
+        })}
+      </group>
     </group>
   );
 }
