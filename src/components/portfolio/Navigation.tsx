@@ -52,8 +52,8 @@ export function Navigation() {
     if (window.location.pathname !== "/" && window.location.pathname !== "/portfolio") {
       window.location.href = `/#${id}`;
     } else {
-      // Lands on the section's stage anchor so the 3D camera arrives on its
-      // waypoint at the same moment the section centers.
+      // Lands on the section's stage anchor, so it ends up exactly centred
+      // with its transition fully settled.
       scrollToStageSection(id);
     }
   };

@@ -12,8 +12,8 @@ import {
 } from "@/lib/scroll-stage";
 
 export function ScrollSnapManager() {
-  // Same position the 3D camera and the section transitions run on, so the
-  // rail can never disagree with what the page is showing.
+  // Same position the section transitions run on, so the rail can never
+  // disagree with what the page is showing.
   const activeSection = useStageIndex();
   const [isSnapEnabled, setIsSnapEnabled] = useState(false);
   const isScrollingRef = useRef(false);
