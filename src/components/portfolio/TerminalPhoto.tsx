@@ -198,7 +198,7 @@ export function TerminalPhoto({
           transformStyle: "preserve-3d",
           boxShadow: `0 24px 60px -30px ${color}`,
         }}
-        className="relative flex h-full w-full flex-col overflow-hidden rounded-box border border-base-300 bg-base-200/70 font-mono-display shadow-2xl backdrop-blur-md transition-colors duration-300 hover:border-primary/40"
+        className="relative flex h-full w-full flex-col overflow-hidden rounded-box border border-base-300 bg-base-200/85 font-mono-display shadow-2xl transition-colors duration-300 hover:border-primary/40"
       >
         {/* ── Title bar ─────────────────────────────────────────────── */}
         <div className="flex shrink-0 items-center gap-2 border-b border-base-300 bg-base-300/40 px-3 py-2">
@@ -269,7 +269,7 @@ export function TerminalPhoto({
           ))}
 
           {/* File label, top-left */}
-          <span className="pointer-events-none absolute left-4 top-4 rounded-sm border border-base-300/70 bg-base-100/70 px-1.5 py-0.5 text-[9px] tracking-tight text-base-content/70 backdrop-blur-sm">
+          <span className="pointer-events-none absolute left-4 top-4 rounded-sm border border-base-300/70 bg-base-100/85 px-1.5 py-0.5 text-[9px] tracking-tight text-base-content/70">
             profile.jpg
           </span>
 
@@ -279,7 +279,7 @@ export function TerminalPhoto({
             onClick={() => setPinnedRaw((v) => !v)}
             aria-pressed={pinnedRaw}
             data-cursor="hover"
-            className="absolute bottom-3 left-4 rounded-sm border border-base-300/70 bg-base-100/70 px-1.5 py-0.5 text-[9px] tracking-tight text-base-content/70 backdrop-blur-sm transition-colors hover:border-primary/50 hover:text-primary"
+            className="absolute bottom-3 left-4 rounded-sm border border-base-300/70 bg-base-100/85 px-1.5 py-0.5 text-[9px] tracking-tight text-base-content/70 transition-colors hover:border-primary/50 hover:text-primary"
           >
             {pinnedRaw ? "--raw" : "--ascii"}
           </button>
@@ -294,7 +294,7 @@ export function TerminalPhoto({
         </div>
 
         {/* ── Code block ────────────────────────────────────────────── */}
-        <div className="shrink-0 border-t border-base-300 bg-base-100/60 px-3 py-2.5 text-[10px] leading-[1.55] backdrop-blur-sm">
+        <div className="shrink-0 border-t border-base-300 bg-base-100/85 px-3 py-2.5 text-[10px] leading-[1.55]">
           {CODE_LINES.map((line, i) => {
             const lineStart = LINE_STARTS[i];
             const lineLength = LINE_LENGTHS[i];

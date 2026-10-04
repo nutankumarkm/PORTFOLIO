@@ -51,7 +51,15 @@ export function SectionStage({ id, children }: SectionStageProps) {
   // skipped: `useReducedMotion` reads false on the server, so branching on it
   // here would hand a reduced-motion client a different tree than it hydrates.
   // Left unsubscribed, `offset` stays 0 and these resolve to no transform.
+  //
+  // `will-change` keeps each section on its own layer at a fixed raster scale.
+  // Without it the browser re-rasterised a whole section every time the scroll
+  // nudged its scale, on every scrolling frame — the single biggest scrolling
+  // cost once the glass blur was gone. (Safe here: nothing inside a section is
+  // `position: fixed`, which this would re-anchor.)
   return (
-    <motion.div style={{ opacity, y, scale }}>{children}</motion.div>
+    <motion.div style={{ opacity, y, scale, willChange: "transform, opacity" }}>
+      {children}
+    </motion.div>
   );
 }

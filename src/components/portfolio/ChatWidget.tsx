@@ -295,7 +295,7 @@ export function ChatWidget() {
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             role="dialog"
             aria-label="Portfolio assistant"
-            className="card fixed bottom-24 right-4 z-[95] flex h-[580px] max-h-[calc(100svh-8rem)] w-[calc(100vw-32px)] flex-col overflow-hidden border border-base-300 bg-base-100/90 font-sans shadow-2xl backdrop-blur-xl sm:right-6 sm:w-[400px]"
+            className="card fixed bottom-24 right-4 z-[95] flex h-[580px] max-h-[calc(100svh-8rem)] w-[calc(100vw-32px)] flex-col overflow-hidden border border-base-300 bg-base-100/95 font-sans shadow-2xl sm:right-6 sm:w-[400px]"
           >
             {/* Header */}
             <div className="navbar min-h-0 select-none border-b border-base-300 bg-base-200 px-4 py-3">

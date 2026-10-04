@@ -56,9 +56,10 @@ const GROUP_FOR_SECTION: Record<string, string> = {
 };
 
 // How hard the camera chases the scroll. Higher lands sooner and tracks the
-// wheel more literally; lower glides. ~5 keeps a flick of momentum without
-// feeling detached from the page.
-const CAMERA_DAMPING = 5;
+// wheel more literally; lower glides. At 12 the camera closes 95% of any gap
+// in ~0.25s — still a glide rather than a step per wheel notch — where 5 took
+// ~0.6s and read as the background lagging behind the page.
+const CAMERA_DAMPING = 12;
 
 // Below this the camera counts as parked: it stops chasing and the canvas drops
 // back to its idle frame rate.
@@ -66,17 +67,18 @@ const SETTLE_EPSILON = 0.0004;
 
 // Wash over the canvas, under the page content.
 //
-// The sections carry a scroll transform, which makes each one a backdrop root —
-// so `backdrop-filter` on the glass panels inside them cannot sample the canvas
-// and quietly stops blurring. Rather than making fifteen panels opaque enough to
-// survive without it, the scene itself is softened once, here. Raise for more
-// contrast behind text, drop to 0 to see the scene at full strength.
+// The panels above the scene deliberately carry no `backdrop-filter`: blurring
+// what sits behind them has to be redone on every frame the canvas changes,
+// which on laptop GPUs was the heaviest cost on the page while scrolling. They
+// are opaque enough to read on their own, and the scene is softened once, here.
+// Raise for more contrast behind text, drop to 0 to see the scene at full
+// strength.
 const SCENE_SCRIM = "bg-base-100/35";
 
 // Parked, the scene is a slow-drifting backdrop and half the repaints means
-// half the WebGL work *and* half the backdrop-filter re-blurs on the glass
-// panels above it. Mid-flight it draws every display frame, or the camera
-// visibly steps against the page scrolling over it.
+// half the WebGL work and half the compositing of the page above it.
+// Mid-flight it draws every display frame, or the camera visibly steps against
+// the page scrolling over it.
 const IDLE_FPS = 30;
 
 // Frame timestamps wobble around the vsync interval. A quarter of a 60Hz frame

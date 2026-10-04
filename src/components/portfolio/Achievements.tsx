@@ -29,11 +29,11 @@ export function Achievements() {
                 viewport={{ once: false }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
                 data-cursor="hover"
-                className="card group relative overflow-hidden border border-base-300 bg-base-200/40 backdrop-blur-md transition-all duration-300 hover:border-base-content/20 hover:shadow-2xl"
+                className="card group relative overflow-hidden border border-base-300 bg-base-200/90 transition-all duration-300 hover:border-base-content/20 hover:shadow-2xl"
               >
                 {/* Decorative orb */}
                 <div
-                  className={`absolute -right-12 -top-12 h-32 w-32 rounded-full opacity-30 blur-2xl ${a.bg}`}
+                  className={`glow-orb-sm absolute -right-[138px] -top-[138px] h-[308px] w-[308px] opacity-30 ${a.text}`}
                   style={{ animation: "breathe 4s ease-in-out infinite" }}
                 />
 

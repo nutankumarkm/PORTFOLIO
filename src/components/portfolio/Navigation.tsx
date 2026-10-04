@@ -71,7 +71,7 @@ export function Navigation() {
           transition={{ type: "spring", stiffness: 280, damping: 30 }}
           className={`navbar min-h-0 rounded-full border px-3 py-1.5 transition-colors duration-300 md:px-4 ${
             scrolled
-              ? "border-base-300 bg-base-100/80 shadow-sm backdrop-blur-xl"
+              ? "border-base-300 bg-base-100/90 shadow-sm"
               : "border-transparent bg-transparent"
           }`}
         >
@@ -199,7 +199,7 @@ export function Navigation() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-base-100/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-[99] flex flex-col items-center justify-center bg-base-100/95 md:hidden"
           >
             <ul className="menu w-full max-w-xs gap-1">
               {navItems.map((item, i) => (

@@ -57,7 +57,7 @@ export function About() {
             {/* Opaque enough to carry the text on its own: the wrapper's
                 scroll transform makes this a backdrop root, so the blur can't
                 be relied on to sample the canvas behind it. */}
-            <div className="space-y-6 rounded-box border border-base-300/70 bg-base-100/90 p-6 shadow-lg backdrop-blur-xl sm:p-8">
+            <div className="space-y-6 rounded-box border border-base-300/70 bg-base-100/95 p-6 shadow-lg sm:p-8">
               {aboutParagraphs.map((p, i) => (
                 <motion.p
                   key={i}
@@ -80,7 +80,7 @@ export function About() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: false, margin: "-100px" }}
               transition={{ delay: 0.5, duration: 0.7 }}
-              className="card glow-card mt-10 border border-base-300 bg-base-200/85 backdrop-blur-md"
+              className="card glow-card mt-10 border border-base-300 bg-base-200/90"
             >
               <div className="card-body flex-row flex-wrap items-start justify-between gap-4">
                 <div>

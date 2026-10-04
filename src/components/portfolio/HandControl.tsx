@@ -251,7 +251,7 @@ export function HandControl() {
               initial={{ opacity: 0, y: 12, scale: 0.96 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 12, scale: 0.96 }}
-              className="w-48 overflow-hidden rounded-box border border-base-300 bg-base-100/95 shadow-xl backdrop-blur-xl"
+              className="w-48 overflow-hidden rounded-box border border-base-300 bg-base-100/95 shadow-xl"
             >
               <div className="relative aspect-[4/3] w-full bg-base-300/40">
                 <canvas

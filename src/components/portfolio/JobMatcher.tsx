@@ -204,8 +204,8 @@ export function JobMatcher() {
     >
       {/* Score-reactive background glow */}
       <div
-        className={`pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-10 blur-[140px] transition-colors duration-700 ${
-          result ? (strong ? "bg-primary" : "bg-accent") : "bg-base-content/20"
+        className={`glow-orb-lg pointer-events-none absolute left-1/2 top-1/2 h-[1134px] w-[1134px] -translate-x-1/2 -translate-y-1/2 opacity-10 transition-colors duration-700 ${
+          result ? (strong ? "text-primary" : "text-accent") : "text-base-content/20"
         }`}
       />
 
@@ -226,7 +226,7 @@ export function JobMatcher() {
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
           {/* Input */}
           <div className="flex flex-col gap-6">
-            <div className="card border border-base-300 bg-base-200/50 shadow-xl backdrop-blur-md">
+            <div className="card border border-base-300 bg-base-200/90 shadow-xl">
               <div className="card-body">
                 <fieldset className="fieldset p-0">
                   <legend className="fieldset-legend flex w-full items-center justify-between gap-2 font-mono-display text-[9px] uppercase tracking-wider">
@@ -286,7 +286,7 @@ export function JobMatcher() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.3 }}
-                  className="card relative overflow-hidden border border-base-300 bg-base-200/60 shadow-2xl backdrop-blur-md"
+                  className="card relative overflow-hidden border border-base-300 bg-base-200/90 shadow-2xl"
                 >
                   <div className="card-body gap-6">
                     {/* Score */}
